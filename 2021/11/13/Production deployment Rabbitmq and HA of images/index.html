@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Rabbitmq高可用Rabbitmq高可用镜像简介由于RabbitMQ是用erlang开发的，RabbitMQ完全依赖Erlang的Cluster，因为erlang天生就是一门分布式语言,集群非常方便，但其本身并不支持负载均衡。Erlang的集群中各节点是经由过程一个magic cookie来实现的，这个cookie存放在 $home&#x2F;.erlang.cookie 中(像我的root用户安装的就">
+  <meta name="description" content="本篇为Hexo示例文档.  # 这里是摘要部分,写1~2句话,就实现不全显示博文了..">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kaivi&#39;Blogs">
+<meta property="og:title" content="Hexo示例文档">
 <meta property="og:url" content="http://example.com/2021/11/13/Production%20deployment%20Rabbitmq%20and%20HA%20of%20images/index.html">
 <meta property="og:site_name" content="Kaivi&#39;Blogs">
-<meta property="og:description" content="Rabbitmq高可用Rabbitmq高可用镜像简介由于RabbitMQ是用erlang开发的，RabbitMQ完全依赖Erlang的Cluster，因为erlang天生就是一门分布式语言,集群非常方便，但其本身并不支持负载均衡。Erlang的集群中各节点是经由过程一个magic cookie来实现的，这个cookie存放在 $home&#x2F;.erlang.cookie 中(像我的root用户安装的就">
+<meta property="og:description" content="本篇为Hexo示例文档.  # 这里是摘要部分,写1~2句话,就实现不全显示博文了..">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200628143717813.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200628143749914.png">
@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200628173942841.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200628174937120.png">
 <meta property="article:published_time" content="2021-11-13T06:11:34.990Z">
-<meta property="article:modified_time" content="2021-11-13T06:11:43.448Z">
+<meta property="article:modified_time" content="2021-11-13T06:26:23.286Z">
 <meta property="article:author" content="Kaivi">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200628143717813.png">
@@ -51,7 +51,7 @@
   };
 </script>
 
-  <title> | Kaivi'Blogs</title>
+  <title>Hexo示例文档 | Kaivi'Blogs</title>
   
 
 
@@ -174,7 +174,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          Hexo示例文档
         </h1>
 
         <div class="post-meta">
@@ -185,7 +185,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2021-11-13 14:11:34 / Modified: 14:11:43" itemprop="dateCreated datePublished" datetime="2021-11-13T14:11:34+08:00">2021-11-13</time>
+              <time title="Created: 2021-11-13 14:11:34 / Modified: 14:26:23" itemprop="dateCreated datePublished" datetime="2021-11-13T14:11:34+08:00">2021-11-13</time>
             </span>
 
           
@@ -199,7 +199,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="Rabbitmq高可用"><a href="#Rabbitmq高可用" class="headerlink" title="Rabbitmq高可用"></a>Rabbitmq高可用</h1><h2 id="Rabbitmq高可用镜像简介"><a href="#Rabbitmq高可用镜像简介" class="headerlink" title="Rabbitmq高可用镜像简介"></a>Rabbitmq高可用镜像简介</h2><p>由于RabbitMQ是用erlang开发的，RabbitMQ完全依赖Erlang的Cluster，因为erlang天生就是一门分布式语言,集群非常方便，但其本身并不支持负载均衡。Erlang的集群中各节点是经由过程一个magic cookie来实现的，这个cookie存放在 $home/.erlang.cookie 中(像我的root用户安装的就是放在我的root/.erlang.cookie中)，文件是400的权限。所以必须包管各节点cookie对峙一致，不然节点之间就无法通信。</p>
+        <p>本篇为Hexo示例文档.  # 这里是摘要部分,写1~2句话,就实现不全显示博文了..</p>
+<span id="more"></span>
+
+
+<h1 id="Rabbitmq高可用"><a href="#Rabbitmq高可用" class="headerlink" title="Rabbitmq高可用"></a>Rabbitmq高可用</h1><h2 id="Rabbitmq高可用镜像简介"><a href="#Rabbitmq高可用镜像简介" class="headerlink" title="Rabbitmq高可用镜像简介"></a>Rabbitmq高可用镜像简介</h2><p>由于RabbitMQ是用erlang开发的，RabbitMQ完全依赖Erlang的Cluster，因为erlang天生就是一门分布式语言,集群非常方便，但其本身并不支持负载均衡。Erlang的集群中各节点是经由过程一个magic cookie来实现的，这个cookie存放在 $home/.erlang.cookie 中(像我的root用户安装的就是放在我的root/.erlang.cookie中)，文件是400的权限。所以必须包管各节点cookie对峙一致，不然节点之间就无法通信。</p>
 <p>RabbitMQ的集群节点包括内存节点、磁盘节点。顾名思义内存节点就是将所有数据放在内存，磁盘节点将数据放在磁盘。不过，如果在投递消息时，打开了消息的持久化，那么即使是内存节点，数据还是安全的放在磁盘。</p>
 <p>一个rabbitmq集 群中可以共享 user，vhost，queue，exchange等，所有的数据和状态都是必须在所有节点上复制的，一个例外是，那些当前只属于创建它的节点的消息队列，尽管它们可见且可被所有节点读取。rabbitmq节点可以动态的加入到集群中，一个节点它可以加入到集群中，也可以从集群环境中移除。<br>集群中有两种节点：<br>1 内存节点：只保存状态到内存（一个例外的情况是：持久的queue的持久内容将被保存到disk）<br>2 磁盘节点：保存状态到内存和磁盘。<br>内存节点虽然不写入磁盘，但是它执行比磁盘节点要好。集群中，只需要一个磁盘节点来保存状态 就足够了如果集群中只有内存节点，那么不能停止它们，否则所有的状态，消息等都会丢失。</p>
 <h2 id="基础环境"><a href="#基础环境" class="headerlink" title="基础环境"></a>基础环境</h2><table>
