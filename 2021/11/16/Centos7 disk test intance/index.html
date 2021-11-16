@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="Test intance in centos 7">
@@ -36,6 +36,7 @@
 <meta property="article:published_time" content="2021-11-16T06:11:13.306Z">
 <meta property="article:modified_time" content="2021-11-16T06:21:15.024Z">
 <meta property="article:author" content="Kaivi">
+<meta property="article:tag" content="Linux life">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/20191017090848985.png">
 
@@ -83,7 +84,7 @@
   </style>
 </noscript>
 
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -106,6 +107,7 @@
       <h1 class="site-title">Kaivi'Blogs</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
+      <p class="site-subtitle" itemprop="description">Be yourself, Be better</p>
   </div>
 
   <div class="site-nav-right">
@@ -206,34 +208,280 @@
 
 <p>实验机器 centos 7</p>
 <h2 id="一、VMs增加磁盘"><a href="#一、VMs增加磁盘" class="headerlink" title="一、VMs增加磁盘"></a>一、VMs增加磁盘</h2><p> 查看磁盘内容</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#lsblk</span></span><br><span class="line">NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT</span><br><span class="line">sda      8:0    0  200G  0 disk </span><br><span class="line">├─sda1   8:1    0    1G  0 part /boot</span><br><span class="line">├─sda2   8:2    0  100G  0 part /</span><br><span class="line">├─sda3   8:3    0   50G  0 part /data</span><br><span class="line">├─sda4   8:4    0    1K  0 part   </span><br><span class="line">└─sda5   8:5    0    4G  0 part [SWAP]</span><br><span class="line">sr0     11:0    1   10G  0 rom  </span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#lsblk</span>
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda      8:0    0  200G  0 disk 
+├─sda1   8:1    0    1G  0 part /boot
+├─sda2   8:2    0  100G  0 part /
+├─sda3   8:3    0   50G  0 part /data
+├─sda4   8:4    0    1K  0 part   
+└─sda5   8:5    0    4G  0 part <span class="token punctuation">[</span>SWAP<span class="token punctuation">]</span>
+sr0     11:0    1   10G  0 rom  
+</code></pre>
 <p> 可以看到只有sda硬盘和sr0光盘在本机VM中<br> 需要在关机的情况下增加一块新的硬盘，这里模拟实验在VM虚拟机上进行。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#init 0</span></span><br><span class="line"><span class="comment">#关机指令</span></span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#init 0</span>
+<span class="token comment" spellcheck="true">#关机指令</span>
+</code></pre>
 <p> 双击硬盘（SCSI）<br><img src="https://img-blog.csdnimg.cn/20191017090848985.png" alt="在这里插入图片描述"><img src="https://img-blog.csdnimg.cn/20191017091026989.png" alt="在这里插入图片描述">点击添加<br><img src="https://img-blog.csdnimg.cn/20191017091113255.png" alt="在这里插入图片描述"><img src="https://img-blog.csdnimg.cn/20191017091136938.png" alt="在这里插入图片描述"><br>这里做实验选择20G就足够，在生产中需要根据生产的需求来定义磁盘的具体大小。</p>
 <p>其他选择默认选项就好，这里增加一块20G的硬盘做实验就ok。<br>最后需要点击确认<br>重新启动VM虚拟机</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#lsblk</span></span><br><span class="line">NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT</span><br><span class="line">sda      8:0    0  200G  0 disk </span><br><span class="line">├─sda1   8:1    0    1G  0 part /boot</span><br><span class="line">├─sda2   8:2    0  100G  0 part /</span><br><span class="line">├─sda3   8:3    0   50G  0 part /data</span><br><span class="line">├─sda4   8:4    0    1K  0 part </span><br><span class="line">└─sda5   8:5    0    4G  0 part [SWAP]</span><br><span class="line">sdb      8:16   0   20G  0 disk </span><br><span class="line">sr0     11:0    1   10G  0 rom </span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#lsblk</span>
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda      8:0    0  200G  0 disk 
+├─sda1   8:1    0    1G  0 part /boot
+├─sda2   8:2    0  100G  0 part /
+├─sda3   8:3    0   50G  0 part /data
+├─sda4   8:4    0    1K  0 part 
+└─sda5   8:5    0    4G  0 part <span class="token punctuation">[</span>SWAP<span class="token punctuation">]</span>
+sdb      8:16   0   20G  0 disk 
+sr0     11:0    1   10G  0 rom 
+</code></pre>
 <p> 显示新增加了一块新硬盘sdb 20G  如果没有显示则需要执行下面命令扫描一遍。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#ls /sys/class/scsi_host/</span></span><br><span class="line">host0  host1  host2</span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#echo &#x27;- - -&#x27; &gt;/sys/class/scsi_host/host0/scan </span></span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#echo &#x27;- - -&#x27; &gt;/sys/class/scsi_host/host1/scan </span></span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#echo &#x27;- - -&#x27; &gt;/sys/class/scsi_host/host2/scan</span></span><br><span class="line"><span class="comment">#扫描磁盘</span></span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#ls /sys/class/scsi_host/</span>
+host0  host1  host2
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#echo '- - -' >/sys/class/scsi_host/host0/scan </span>
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#echo '- - -' >/sys/class/scsi_host/host1/scan </span>
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#echo '- - -' >/sys/class/scsi_host/host2/scan</span>
+<span class="token comment" spellcheck="true">#扫描磁盘</span>
+</code></pre>
+<h2 id="二、创建新的分区"><a href="#二、创建新的分区" class="headerlink" title="二、创建新的分区"></a>二、创建新的分区</h2><pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#lsblk</span>
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda      8:0    0  200G  0 disk 
+├─sda1   8:1    0    1G  0 part /boot
+├─sda2   8:2    0  100G  0 part /
+├─sda3   8:3    0   50G  0 part /data
+├─sda4   8:4    0    1K  0 part 
+└─sda5   8:5    0    4G  0 part <span class="token punctuation">[</span>SWAP<span class="token punctuation">]</span>
+sdb      8:16   0   20G  0 disk 
+sr0     11:0    1   10G  0 rom  
 
-<h2 id="二、创建新的分区"><a href="#二、创建新的分区" class="headerlink" title="二、创建新的分区"></a>二、创建新的分区</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#lsblk</span></span><br><span class="line">NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT</span><br><span class="line">sda      8:0    0  200G  0 disk </span><br><span class="line">├─sda1   8:1    0    1G  0 part /boot</span><br><span class="line">├─sda2   8:2    0  100G  0 part /</span><br><span class="line">├─sda3   8:3    0   50G  0 part /data</span><br><span class="line">├─sda4   8:4    0    1K  0 part </span><br><span class="line">└─sda5   8:5    0    4G  0 part [SWAP]</span><br><span class="line">sdb      8:16   0   20G  0 disk </span><br><span class="line">sr0     11:0    1   10G  0 rom  </span><br><span class="line"></span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#fdisk /dev/sdb                   #修改分区信息</span></span><br><span class="line">Welcome to fdisk (util-linux 2.23.2).</span><br><span class="line">Changes will remain <span class="keyword">in</span> memory only, until you decide to write them.</span><br><span class="line">Be careful before using the write <span class="built_in">command</span>.</span><br><span class="line">Device does not contain a recognized partition table</span><br><span class="line">Building a new DOS disklabel with disk identifier 0xe8a52d63.</span><br><span class="line"></span><br><span class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): n</span><br><span class="line"><span class="comment">#输入对应命令 n 创建新的分区</span></span><br><span class="line">Partition <span class="built_in">type</span>:</span><br><span class="line">   p   primary (0 primary, 0 extended, 4 free)</span><br><span class="line">   e   extended</span><br><span class="line">Select (default p): p</span><br><span class="line"><span class="comment">#选择是主分区还是扩展分区 输入 p 选择主分区</span></span><br><span class="line">Partition number (1-4, default 1):              <span class="comment">#回车 选择默认值</span></span><br><span class="line">First sector (2048-41943039, default 2048):     <span class="comment">#回车 选择默认值</span></span><br><span class="line">Using default value 2048</span><br><span class="line">Last sector, +sectors or +size&#123;K,M,G&#125;</span><br><span class="line"> (2048-41943039, default 41943039): +2G</span><br><span class="line"> <span class="comment">#按照格式输入新分区的大小   有扇区 和指定大小size 两种指定方式 这里选择分区大小为2G</span></span><br><span class="line">Partition 1 of <span class="built_in">type</span> Linux and of size 2 GiB is <span class="built_in">set</span></span><br><span class="line"></span><br><span class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): n   <span class="comment">#同理继续创建新的分区</span></span><br><span class="line">Partition <span class="built_in">type</span>:</span><br><span class="line">   p   primary (1 primary, 0 extended, 3 free)</span><br><span class="line">   e   extended</span><br><span class="line">Select (default p): p                   <span class="comment">#选择主分区</span></span><br><span class="line">Partition number (2-4, default 2):      <span class="comment">#回车 选择默认值</span></span><br><span class="line">First sector (4196352-41943039, default 4196352):      <span class="comment">#回车 选择默认值</span></span><br><span class="line">Using default value 4196352  </span><br><span class="line">Last sector, +sectors or +size&#123;K,M,G&#125; </span><br><span class="line">(4196352-41943039, default 41943039): +4G</span><br><span class="line">Partition 2 of <span class="built_in">type</span> Linux and of size 4 GiB is <span class="built_in">set</span></span><br><span class="line"></span><br><span class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): n </span><br><span class="line">Partition <span class="built_in">type</span>:</span><br><span class="line">   p   primary (2 primary, 1 extended, 1 free)</span><br><span class="line">   l   logical (numbered from 5)</span><br><span class="line">Select (default p):                                     <span class="comment">#回车 选择默认值</span></span><br><span class="line">Using default response p</span><br><span class="line">Selected partition 4     </span><br><span class="line">First sector (23070720-41943039, default 23070720):     <span class="comment">#回车 选择默认值</span></span><br><span class="line">Using default value 23070720</span><br><span class="line">Last sector, +sectors or +size&#123;K,M,G&#125;</span><br><span class="line"> (23070720-41943039, default 41943039): +3G</span><br><span class="line">Partition 4 of <span class="built_in">type</span> Linux and of size 3 GiB is <span class="built_in">set</span></span><br><span class="line"></span><br><span class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): t                   <span class="comment">#修改分区类型</span></span><br><span class="line">Partition number (1-5, default 5): 4      <span class="comment">#选择要修改的分区</span></span><br><span class="line">Hex code (<span class="built_in">type</span> L to list all codes): 82   <span class="comment">#选择分区类型为swap</span></span><br><span class="line">Changed <span class="built_in">type</span> of partition <span class="string">&#x27;Linux&#x27;</span> to <span class="string">&#x27;Linux swap / Solaris&#x27;</span></span><br><span class="line"></span><br><span class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): n</span><br><span class="line">Partition <span class="built_in">type</span>:</span><br><span class="line">   p   primary (2 primary, 0 extended, 2 free)</span><br><span class="line">   e   extended</span><br><span class="line">Select (default p): e                                  <span class="comment">#选择扩展分区</span></span><br><span class="line">Partition number (3,4, default 3):                     <span class="comment">#回车 选择默认值</span></span><br><span class="line">First sector (12584960-41943039, default 12584960):    <span class="comment">#回车 选择默认值</span></span><br><span class="line">Using default value 12584960</span><br><span class="line">Last sector, +sectors or +size&#123;K,M,G&#125; </span><br><span class="line">(12584960-41943039, default 41943039): +5G</span><br><span class="line">Partition 3 of <span class="built_in">type</span> Extended and of size 5 GiB is <span class="built_in">set</span></span><br><span class="line"></span><br><span class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): n    <span class="comment">#同理继续创建新的分区</span></span><br><span class="line">Partition <span class="built_in">type</span>:</span><br><span class="line">   p   primary (2 primary, 1 extended, 1 free)</span><br><span class="line">   l   logical (numbered from 5)</span><br><span class="line">Select (default p): l         <span class="comment">#选择创建逻辑分区  </span></span><br><span class="line">Adding logical partition 5    <span class="comment">#系统自动分配sdb5 </span></span><br><span class="line">First sector (12587008-23070719, default 12587008):    <span class="comment">#回车 选择默认值</span></span><br><span class="line">Using default value 12587008</span><br><span class="line">Last sector, +sectors or +size&#123;K,M,G&#125; </span><br><span class="line">(12587008-23070719, default 23070719): +500M</span><br><span class="line">Partition 5 of <span class="built_in">type</span> Linux and of size 500 MiB is <span class="built_in">set</span></span><br><span class="line"></span><br><span class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): p    <span class="comment">#打印当前分区信息</span></span><br><span class="line"><span class="comment">#注意：现在分区信息还没有保存，即还在内存中，没有保存到文件中。</span></span><br><span class="line">Disk /dev/sdb: 21.5 GB, 21474836480 bytes, 41943040 sectors</span><br><span class="line">Units = sectors of 1 * 512 = 512 bytes</span><br><span class="line">Sector size (logical/physical): 512 bytes / 512 bytes</span><br><span class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes</span><br><span class="line">Disk label <span class="built_in">type</span>: dos</span><br><span class="line">Disk identifier: 0xfaf696f9</span><br><span class="line"></span><br><span class="line">   Device Boot      Start         End      Blocks   Id  System</span><br><span class="line">/dev/sdb1            2048     4196351     2097152   83  Linux</span><br><span class="line">/dev/sdb2         4196352    12584959     4194304   83  Linux</span><br><span class="line">/dev/sdb3        12584960    23070719     5242880    5  Extended</span><br><span class="line">/dev/sdb4        23070720    29362175     3145728   82  Linux swap / Solaris</span><br><span class="line">/dev/sdb5        12587008    13611007      512000   83  Linux</span><br><span class="line"></span><br><span class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): w      <span class="comment">#保存并且退出</span></span><br><span class="line">The partition table has been altered!</span><br><span class="line"></span><br><span class="line">Calling ioctl() to re-read partition table.</span><br><span class="line">Syncing disks.</span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#lsblk</span></span><br><span class="line">NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT</span><br><span class="line">sda      8:0    0  200G  0 disk </span><br><span class="line">├─sda1   8:1    0    1G  0 part /boot</span><br><span class="line">├─sda2   8:2    0  100G  0 part /</span><br><span class="line">├─sda3   8:3    0   50G  0 part /data</span><br><span class="line">├─sda4   8:4    0    1K  0 part </span><br><span class="line">└─sda5   8:5    0    4G  0 part [SWAP]</span><br><span class="line">sdb      8:16   0   20G  0 disk </span><br><span class="line">├─sdb1   8:17   0    2G  0 part </span><br><span class="line">├─sdb2   8:18   0    4G  0 part </span><br><span class="line">├─sdb3   8:19   0    1K  0 part     <span class="comment">#类似指针 实际指向5G大小的扩展分区</span></span><br><span class="line">├─sdb4   8:20   0    3G  0 part </span><br><span class="line">└─sdb5   8:21   0  500M  0 part </span><br><span class="line">sr0     11:0    1   10G  0 rom  </span><br></pre></td></tr></table></figure>
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#fdisk /dev/sdb                   #修改分区信息</span>
+Welcome to <span class="token function">fdisk</span> <span class="token punctuation">(</span>util-linux 2.23.2<span class="token punctuation">)</span>.
+Changes will remain <span class="token keyword">in</span> memory only, <span class="token keyword">until</span> you decide to <span class="token function">write</span> them.
+Be careful before using the <span class="token function">write</span> command.
+Device does not contain a recognized partition table
+Building a new DOS disklabel with disk identifier 0xe8a52d63.
 
+Command <span class="token punctuation">(</span>m <span class="token keyword">for</span> help<span class="token punctuation">)</span>: n
+<span class="token comment" spellcheck="true">#输入对应命令 n 创建新的分区</span>
+Partition type:
+   p   primary <span class="token punctuation">(</span>0 primary, 0 extended, 4 free<span class="token punctuation">)</span>
+   e   extended
+Select <span class="token punctuation">(</span>default p<span class="token punctuation">)</span>: p
+<span class="token comment" spellcheck="true">#选择是主分区还是扩展分区 输入 p 选择主分区</span>
+Partition number <span class="token punctuation">(</span>1-4, default 1<span class="token punctuation">)</span>:              <span class="token comment" spellcheck="true">#回车 选择默认值</span>
+First sector <span class="token punctuation">(</span>2048-41943039, default 2048<span class="token punctuation">)</span>:     <span class="token comment" spellcheck="true">#回车 选择默认值</span>
+Using default value 2048
+Last sector, +sectors or +size<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;K,M,G&amp;#125;</span>
+ <span class="token punctuation">(</span>2048-41943039, default 41943039<span class="token punctuation">)</span>: +2G
+ <span class="token comment" spellcheck="true">#按照格式输入新分区的大小   有扇区 和指定大小size 两种指定方式 这里选择分区大小为2G</span>
+Partition 1 of <span class="token function">type</span> Linux and of size 2 GiB is <span class="token keyword">set</span>
+
+Command <span class="token punctuation">(</span>m <span class="token keyword">for</span> help<span class="token punctuation">)</span>: n   <span class="token comment" spellcheck="true">#同理继续创建新的分区</span>
+Partition type:
+   p   primary <span class="token punctuation">(</span>1 primary, 0 extended, 3 free<span class="token punctuation">)</span>
+   e   extended
+Select <span class="token punctuation">(</span>default p<span class="token punctuation">)</span>: p                   <span class="token comment" spellcheck="true">#选择主分区</span>
+Partition number <span class="token punctuation">(</span>2-4, default 2<span class="token punctuation">)</span>:      <span class="token comment" spellcheck="true">#回车 选择默认值</span>
+First sector <span class="token punctuation">(</span>4196352-41943039, default 4196352<span class="token punctuation">)</span>:      <span class="token comment" spellcheck="true">#回车 选择默认值</span>
+Using default value 4196352  
+Last sector, +sectors or +size<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;K,M,G&amp;#125; </span>
+<span class="token punctuation">(</span>4196352-41943039, default 41943039<span class="token punctuation">)</span>: +4G
+Partition 2 of <span class="token function">type</span> Linux and of size 4 GiB is <span class="token keyword">set</span>
+
+Command <span class="token punctuation">(</span>m <span class="token keyword">for</span> help<span class="token punctuation">)</span>: n 
+Partition type:
+   p   primary <span class="token punctuation">(</span>2 primary, 1 extended, 1 free<span class="token punctuation">)</span>
+   l   logical <span class="token punctuation">(</span>numbered from 5<span class="token punctuation">)</span>
+Select <span class="token punctuation">(</span>default p<span class="token punctuation">)</span>:                                     <span class="token comment" spellcheck="true">#回车 选择默认值</span>
+Using default response p
+Selected partition 4     
+First sector <span class="token punctuation">(</span>23070720-41943039, default 23070720<span class="token punctuation">)</span>:     <span class="token comment" spellcheck="true">#回车 选择默认值</span>
+Using default value 23070720
+Last sector, +sectors or +size<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;K,M,G&amp;#125;</span>
+ <span class="token punctuation">(</span>23070720-41943039, default 41943039<span class="token punctuation">)</span>: +3G
+Partition 4 of <span class="token function">type</span> Linux and of size 3 GiB is <span class="token keyword">set</span>
+
+Command <span class="token punctuation">(</span>m <span class="token keyword">for</span> help<span class="token punctuation">)</span>: t                   <span class="token comment" spellcheck="true">#修改分区类型</span>
+Partition number <span class="token punctuation">(</span>1-5, default 5<span class="token punctuation">)</span>: 4      <span class="token comment" spellcheck="true">#选择要修改的分区</span>
+Hex code <span class="token punctuation">(</span>type L to list all codes<span class="token punctuation">)</span>: 82   <span class="token comment" spellcheck="true">#选择分区类型为swap</span>
+Changed <span class="token function">type</span> of partition <span class="token string">'Linux'</span> to <span class="token string">'Linux swap / Solaris'</span>
+
+Command <span class="token punctuation">(</span>m <span class="token keyword">for</span> help<span class="token punctuation">)</span>: n
+Partition type:
+   p   primary <span class="token punctuation">(</span>2 primary, 0 extended, 2 free<span class="token punctuation">)</span>
+   e   extended
+Select <span class="token punctuation">(</span>default p<span class="token punctuation">)</span>: e                                  <span class="token comment" spellcheck="true">#选择扩展分区</span>
+Partition number <span class="token punctuation">(</span>3,4, default 3<span class="token punctuation">)</span>:                     <span class="token comment" spellcheck="true">#回车 选择默认值</span>
+First sector <span class="token punctuation">(</span>12584960-41943039, default 12584960<span class="token punctuation">)</span>:    <span class="token comment" spellcheck="true">#回车 选择默认值</span>
+Using default value 12584960
+Last sector, +sectors or +size<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;K,M,G&amp;#125; </span>
+<span class="token punctuation">(</span>12584960-41943039, default 41943039<span class="token punctuation">)</span>: +5G
+Partition 3 of <span class="token function">type</span> Extended and of size 5 GiB is <span class="token keyword">set</span>
+
+Command <span class="token punctuation">(</span>m <span class="token keyword">for</span> help<span class="token punctuation">)</span>: n    <span class="token comment" spellcheck="true">#同理继续创建新的分区</span>
+Partition type:
+   p   primary <span class="token punctuation">(</span>2 primary, 1 extended, 1 free<span class="token punctuation">)</span>
+   l   logical <span class="token punctuation">(</span>numbered from 5<span class="token punctuation">)</span>
+Select <span class="token punctuation">(</span>default p<span class="token punctuation">)</span>: l         <span class="token comment" spellcheck="true">#选择创建逻辑分区  </span>
+Adding logical partition 5    <span class="token comment" spellcheck="true">#系统自动分配sdb5 </span>
+First sector <span class="token punctuation">(</span>12587008-23070719, default 12587008<span class="token punctuation">)</span>:    <span class="token comment" spellcheck="true">#回车 选择默认值</span>
+Using default value 12587008
+Last sector, +sectors or +size<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;K,M,G&amp;#125; </span>
+<span class="token punctuation">(</span>12587008-23070719, default 23070719<span class="token punctuation">)</span>: +500M
+Partition 5 of <span class="token function">type</span> Linux and of size 500 MiB is <span class="token keyword">set</span>
+
+Command <span class="token punctuation">(</span>m <span class="token keyword">for</span> help<span class="token punctuation">)</span>: p    <span class="token comment" spellcheck="true">#打印当前分区信息</span>
+<span class="token comment" spellcheck="true">#注意：现在分区信息还没有保存，即还在内存中，没有保存到文件中。</span>
+Disk /dev/sdb: 21.5 GB, 21474836480 bytes, 41943040 sectors
+Units <span class="token operator">=</span> sectors of 1 * 512 <span class="token operator">=</span> 512 bytes
+Sector size <span class="token punctuation">(</span>logical/physical<span class="token punctuation">)</span>: 512 bytes / 512 bytes
+I/O size <span class="token punctuation">(</span>minimum/optimal<span class="token punctuation">)</span>: 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0xfaf696f9
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdb1            2048     4196351     2097152   83  Linux
+/dev/sdb2         4196352    12584959     4194304   83  Linux
+/dev/sdb3        12584960    23070719     5242880    5  Extended
+/dev/sdb4        23070720    29362175     3145728   82  Linux swap / Solaris
+/dev/sdb5        12587008    13611007      512000   83  Linux
+
+Command <span class="token punctuation">(</span>m <span class="token keyword">for</span> help<span class="token punctuation">)</span>: w      <span class="token comment" spellcheck="true">#保存并且退出</span>
+The partition table has been altered<span class="token operator">!</span>
+
+Calling ioctl<span class="token punctuation">(</span><span class="token punctuation">)</span> to re-read partition table.
+Syncing disks.
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#lsblk</span>
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda      8:0    0  200G  0 disk 
+├─sda1   8:1    0    1G  0 part /boot
+├─sda2   8:2    0  100G  0 part /
+├─sda3   8:3    0   50G  0 part /data
+├─sda4   8:4    0    1K  0 part 
+└─sda5   8:5    0    4G  0 part <span class="token punctuation">[</span>SWAP<span class="token punctuation">]</span>
+sdb      8:16   0   20G  0 disk 
+├─sdb1   8:17   0    2G  0 part 
+├─sdb2   8:18   0    4G  0 part 
+├─sdb3   8:19   0    1K  0 part     <span class="token comment" spellcheck="true">#类似指针 实际指向5G大小的扩展分区</span>
+├─sdb4   8:20   0    3G  0 part 
+└─sdb5   8:21   0  500M  0 part 
+sr0     11:0    1   10G  0 rom  
+</code></pre>
 <h2 id="三、格式化文件系统"><a href="#三、格式化文件系统" class="headerlink" title="三、格式化文件系统"></a>三、格式化文件系统</h2><blockquote>
 <p>对于主分区sdb1选择文件系统为 xfs 格式<br>对于主分区sdb2选择文件系统为 ext4 格式<br> 对于扩展分区sdb3由于是指针形式 所以不存在所谓的文件系统<br> 对于主分区swap sdb4 选择文件系统为特有格式 swap 格式的文件系统<br> 对于扩展分区里面的逻辑分区选择文件系统为 xfs 格式</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#mkfs （TAB TAB）    #双击TAB 查看文件系统类型</span></span><br><span class="line">mkfs         mkfs.ext2    mkfs.fat     mkfs.vfat</span><br><span class="line">mkfs.btrfs   mkfs.ext3    mkfs.minix   mkfs.xfs</span><br><span class="line">mkfs.cramfs  mkfs.ext4    mkfs.msdos   </span><br><span class="line"></span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#mkfs.xfs /dev/sdb1 #对于主分区sdb1选择文件系统为 xfs 格式 </span></span><br><span class="line">meta-data=/dev/sdb1              isize=512    agcount=4, agsize=131072 blks</span><br><span class="line">         =                       sectsz=512   attr=2, projid32bit=1</span><br><span class="line">         =                       crc=1        finobt=0, sparse=0</span><br><span class="line">data     =                       bsize=4096   blocks=524288, imaxpct=25</span><br><span class="line">         =                       sunit=0      swidth=0 blks</span><br><span class="line">naming   =version 2              bsize=4096   ascii-ci=0 ftype=1</span><br><span class="line"><span class="built_in">log</span>      =internal <span class="built_in">log</span>           bsize=4096   blocks=2560, version=2</span><br><span class="line">         =                       sectsz=512   sunit=0 blks, lazy-count=1</span><br><span class="line">realtime =none                   extsz=4096   blocks=0, rtextents=0</span><br><span class="line">  </span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#mkfs.ext4 /dev/sdb2  #对于主分区sdb2选择文件系统为 ext4 格式 </span></span><br><span class="line">mke2fs 1.42.9 (28-Dec-2013)</span><br><span class="line">Filesystem label=</span><br><span class="line">OS <span class="built_in">type</span>: Linux</span><br><span class="line">Block size=4096 (<span class="built_in">log</span>=2)</span><br><span class="line">Fragment size=4096 (<span class="built_in">log</span>=2)</span><br><span class="line">Stride=0 blocks, Stripe width=0 blocks</span><br><span class="line">262144 inodes, 1048576 blocks</span><br><span class="line">52428 blocks (5.00%) reserved <span class="keyword">for</span> the super user</span><br><span class="line">First data block=0</span><br><span class="line">Maximum filesystem blocks=1073741824</span><br><span class="line">32 block groups</span><br><span class="line">32768 blocks per group, 32768 fragments per group</span><br><span class="line">8192 inodes per group</span><br><span class="line">Superblock backups stored on blocks: </span><br><span class="line">	32768, 98304, 163840, 229376, 294912, 819200, 884736</span><br><span class="line">Allocating group tables: <span class="keyword">done</span>                            </span><br><span class="line">Writing inode tables: <span class="keyword">done</span>                            </span><br><span class="line">Creating journal (32768 blocks): <span class="keyword">done</span></span><br><span class="line">Writing superblocks and filesystem accounting information: <span class="keyword">done</span> </span><br><span class="line"></span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#mkswap /dev/sdb4     #特有命令mkswap </span></span><br><span class="line"> <span class="comment">#对于主分区swap sdb4 选择文件系统为特有格式 swap 格式的文件系统</span></span><br><span class="line">Setting up swapspace version 1, size = 3145724 KiB</span><br><span class="line">no label, UUID=11107269-94f9-44b4-b904-5e5fa130760e</span><br><span class="line"> </span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#mkfs.xfs /dev/sdb5 </span></span><br><span class="line"><span class="comment">#对于扩展分区里面的逻辑分区选择文件系统为 xfs 格式</span></span><br><span class="line">meta-data=/dev/sdb5              isize=512    agcount=4, agsize=32000 blks</span><br><span class="line">         =                       sectsz=512   attr=2, projid32bit=1</span><br><span class="line">         =                       crc=1        finobt=0, sparse=0</span><br><span class="line">data     =                       bsize=4096   blocks=128000, imaxpct=25</span><br><span class="line">         =                       sunit=0      swidth=0 blks</span><br><span class="line">naming   =version 2              bsize=4096   ascii-ci=0 ftype=1</span><br><span class="line"><span class="built_in">log</span>      =internal <span class="built_in">log</span>           bsize=4096   blocks=855, version=2</span><br><span class="line">         =                       sectsz=512   sunit=0 blks, lazy-count=1</span><br><span class="line">realtime =none                   extsz=4096   blocks=0, rtextents=0</span><br><span class="line"></span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#lsblk -f    #查看磁盘的文件系统</span></span><br><span class="line">NAME   FSTYPE LABEL UUID                                 MOUNTPOINT</span><br><span class="line">sda                                                      </span><br><span class="line">├─sda1 xfs          3cf92a9d-573a-4156-8ac5-c9bc543f286d /boot</span><br><span class="line">├─sda2 xfs          c2317946-09ce-465c-860b-76733ea8ea79 /</span><br><span class="line">├─sda3 xfs          942c303c-c207-4624-9db0-cd2672225453 /data</span><br><span class="line">├─sda4                                                   </span><br><span class="line">└─sda5 swap         c135b4be-ef58-489b-8cc2-47d33a02333d [SWAP]</span><br><span class="line">sdb                                                      </span><br><span class="line">├─sdb1 xfs          2e5bd3c8-6cae-4404-8ded-52fd48c84a71 </span><br><span class="line">├─sdb2 ext4         3b4c7211-ea7b-4c78-9af2-22de59c91208 </span><br><span class="line">├─sdb3                                                   </span><br><span class="line">├─sdb4 swap         11107269-94f9-44b4-b904-5e5fa130760e [SWAP]</span><br><span class="line">└─sdb5 xfs          919d27cb-72f2-4830-b4a9-871059f17694 </span><br><span class="line">sr0    iso966 CentOS 7 x86_64</span><br><span class="line">                    2018-11-26-14-22-58-00          </span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#mkfs （TAB TAB）    #双击TAB 查看文件系统类型</span>
+mkfs         mkfs.ext2    mkfs.fat     mkfs.vfat
+mkfs.btrfs   mkfs.ext3    mkfs.minix   mkfs.xfs
+mkfs.cramfs  mkfs.ext4    mkfs.msdos   
 
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#mkfs.xfs /dev/sdb1 #对于主分区sdb1选择文件系统为 xfs 格式 </span>
+meta-data<span class="token operator">=</span>/dev/sdb1              isize<span class="token operator">=</span>512    agcount<span class="token operator">=</span>4, agsize<span class="token operator">=</span>131072 blks
+         <span class="token operator">=</span>                       sectsz<span class="token operator">=</span>512   attr<span class="token operator">=</span>2, projid32bit<span class="token operator">=</span>1
+         <span class="token operator">=</span>                       crc<span class="token operator">=</span>1        finobt<span class="token operator">=</span>0, sparse<span class="token operator">=</span>0
+data     <span class="token operator">=</span>                       bsize<span class="token operator">=</span>4096   blocks<span class="token operator">=</span>524288, imaxpct<span class="token operator">=</span>25
+         <span class="token operator">=</span>                       sunit<span class="token operator">=</span>0      swidth<span class="token operator">=</span>0 blks
+naming   <span class="token operator">=</span>version 2              bsize<span class="token operator">=</span>4096   ascii-ci<span class="token operator">=</span>0 ftype<span class="token operator">=</span>1
+log      <span class="token operator">=</span>internal log           bsize<span class="token operator">=</span>4096   blocks<span class="token operator">=</span>2560, version<span class="token operator">=</span>2
+         <span class="token operator">=</span>                       sectsz<span class="token operator">=</span>512   sunit<span class="token operator">=</span>0 blks, lazy-count<span class="token operator">=</span>1
+realtime <span class="token operator">=</span>none                   extsz<span class="token operator">=</span>4096   blocks<span class="token operator">=</span>0, rtextents<span class="token operator">=</span>0
+  
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#mkfs.ext4 /dev/sdb2  #对于主分区sdb2选择文件系统为 ext4 格式 </span>
+mke2fs 1.42.9 <span class="token punctuation">(</span>28-Dec-2013<span class="token punctuation">)</span>
+Filesystem label<span class="token operator">=</span>
+OS type: Linux
+Block size<span class="token operator">=</span>4096 <span class="token punctuation">(</span>log<span class="token operator">=</span>2<span class="token punctuation">)</span>
+Fragment size<span class="token operator">=</span>4096 <span class="token punctuation">(</span>log<span class="token operator">=</span>2<span class="token punctuation">)</span>
+Stride<span class="token operator">=</span>0 blocks, Stripe width<span class="token operator">=</span>0 blocks
+262144 inodes, 1048576 blocks
+52428 blocks <span class="token punctuation">(</span>5.00%<span class="token punctuation">)</span> reserved <span class="token keyword">for</span> the super user
+First data block<span class="token operator">=</span>0
+Maximum filesystem blocks<span class="token operator">=</span>1073741824
+32 block <span class="token function">groups</span>
+32768 blocks per group, 32768 fragments per group
+8192 inodes per group
+Superblock backups stored on blocks: 
+    32768, 98304, 163840, 229376, 294912, 819200, 884736
+Allocating group tables: <span class="token keyword">done</span>                            
+Writing inode tables: <span class="token keyword">done</span>                            
+Creating journal <span class="token punctuation">(</span>32768 blocks<span class="token punctuation">)</span>: <span class="token keyword">done</span>
+Writing superblocks and filesystem accounting information: <span class="token keyword">done</span> 
+
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#mkswap /dev/sdb4     #特有命令mkswap </span>
+ <span class="token comment" spellcheck="true">#对于主分区swap sdb4 选择文件系统为特有格式 swap 格式的文件系统</span>
+Setting up swapspace version 1, size <span class="token operator">=</span> 3145724 KiB
+no label, UUID<span class="token operator">=</span>11107269-94f9-44b4-b904-5e5fa130760e
+ 
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#mkfs.xfs /dev/sdb5 </span>
+<span class="token comment" spellcheck="true">#对于扩展分区里面的逻辑分区选择文件系统为 xfs 格式</span>
+meta-data<span class="token operator">=</span>/dev/sdb5              isize<span class="token operator">=</span>512    agcount<span class="token operator">=</span>4, agsize<span class="token operator">=</span>32000 blks
+         <span class="token operator">=</span>                       sectsz<span class="token operator">=</span>512   attr<span class="token operator">=</span>2, projid32bit<span class="token operator">=</span>1
+         <span class="token operator">=</span>                       crc<span class="token operator">=</span>1        finobt<span class="token operator">=</span>0, sparse<span class="token operator">=</span>0
+data     <span class="token operator">=</span>                       bsize<span class="token operator">=</span>4096   blocks<span class="token operator">=</span>128000, imaxpct<span class="token operator">=</span>25
+         <span class="token operator">=</span>                       sunit<span class="token operator">=</span>0      swidth<span class="token operator">=</span>0 blks
+naming   <span class="token operator">=</span>version 2              bsize<span class="token operator">=</span>4096   ascii-ci<span class="token operator">=</span>0 ftype<span class="token operator">=</span>1
+log      <span class="token operator">=</span>internal log           bsize<span class="token operator">=</span>4096   blocks<span class="token operator">=</span>855, version<span class="token operator">=</span>2
+         <span class="token operator">=</span>                       sectsz<span class="token operator">=</span>512   sunit<span class="token operator">=</span>0 blks, lazy-count<span class="token operator">=</span>1
+realtime <span class="token operator">=</span>none                   extsz<span class="token operator">=</span>4096   blocks<span class="token operator">=</span>0, rtextents<span class="token operator">=</span>0
+
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#lsblk -f    #查看磁盘的文件系统</span>
+NAME   FSTYPE LABEL UUID                                 MOUNTPOINT
+sda                                                      
+├─sda1 xfs          3cf92a9d-573a-4156-8ac5-c9bc543f286d /boot
+├─sda2 xfs          c2317946-09ce-465c-860b-76733ea8ea79 /
+├─sda3 xfs          942c303c-c207-4624-9db0-cd2672225453 /data
+├─sda4                                                   
+└─sda5 swap         c135b4be-ef58-489b-8cc2-47d33a02333d <span class="token punctuation">[</span>SWAP<span class="token punctuation">]</span>
+sdb                                                      
+├─sdb1 xfs          2e5bd3c8-6cae-4404-8ded-52fd48c84a71 
+├─sdb2 ext4         3b4c7211-ea7b-4c78-9af2-22de59c91208 
+├─sdb3                                                   
+├─sdb4 swap         11107269-94f9-44b4-b904-5e5fa130760e <span class="token punctuation">[</span>SWAP<span class="token punctuation">]</span>
+└─sdb5 xfs          919d27cb-72f2-4830-b4a9-871059f17694 
+sr0    iso966 CentOS 7 x86_64
+                    2018-11-26-14-22-58-00          
+</code></pre>
 <h2 id="四、挂载文件夹"><a href="#四、挂载文件夹" class="headerlink" title="四、挂载文件夹"></a>四、挂载文件夹</h2><blockquote>
 <p>挂载：同时只能挂一个，会被后面的挂载点覆盖<br>一个设备能允许多个挂载点。</p>
 </blockquote>
 <blockquote>
 <p>原则：要做挂载点，这个挂载点再挂载前不要放数据<br>同一个设备挂载到同一磁盘上，等价于硬链接 一个挂载点同一时间挂一个设备<br>挂载状态下不可以取消挂载</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 /]<span class="comment">#mkdir /mnt/sdb&#123;1,2，5&#125;</span></span><br><span class="line">[root@KAIVI7 /]<span class="comment">#tree /mnt</span></span><br><span class="line">/mnt</span><br><span class="line">├── sdb1</span><br><span class="line">├── sdb2</span><br><span class="line">└── sdb5</span><br><span class="line">3 directories, 0 files</span><br><span class="line"><span class="comment"># 在根/下子目录/mnt 下创建几个子目录用来做挂在前准备</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 /]<span class="comment">#mount /dev/sdb1 /mnt/sdb1           #设备名挂载</span></span><br><span class="line">[root@KAIVI7 /]<span class="comment">#mount UUID=&quot;3b4c7211-ea7b-4c78-9af2-22de59c91208&quot; /mnt/sdb2</span></span><br><span class="line"><span class="comment">#UUID名挂载</span></span><br><span class="line">[root@KAIVI7 /]<span class="comment">#mkswap /dev/sdb4   #创建swap文件系统     </span></span><br><span class="line">[root@KAIVI7 /]<span class="comment">#swapon /dev/sdb4   #挂载swap</span></span><br><span class="line">[root@KAIVI7 /]<span class="comment">#mount /dev/sdb5 /mnt/sdb5    #设备名挂载</span></span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 /<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#mkdir /mnt/sdb&amp;#123;1,2，5&amp;#125;</span>
+<span class="token punctuation">[</span>root@KAIVI7 /<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#tree /mnt</span>
+/mnt
+├── sdb1
+├── sdb2
+└── sdb5
+3 directories, 0 files
+<span class="token comment" spellcheck="true"># 在根/下子目录/mnt 下创建几个子目录用来做挂在前准备</span>
+</code></pre>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 /<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#mount /dev/sdb1 /mnt/sdb1           #设备名挂载</span>
+<span class="token punctuation">[</span>root@KAIVI7 /<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#mount UUID="3b4c7211-ea7b-4c78-9af2-22de59c91208" /mnt/sdb2</span>
+<span class="token comment" spellcheck="true">#UUID名挂载</span>
+<span class="token punctuation">[</span>root@KAIVI7 /<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#mkswap /dev/sdb4   #创建swap文件系统     </span>
+<span class="token punctuation">[</span>root@KAIVI7 /<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#swapon /dev/sdb4   #挂载swap</span>
+<span class="token punctuation">[</span>root@KAIVI7 /<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#mount /dev/sdb5 /mnt/sdb5    #设备名挂载</span>
+</code></pre>
 <p>查看磁盘挂载情况</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 /]<span class="comment">#lsblk</span></span><br><span class="line">NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT</span><br><span class="line">sda      8:0    0  200G  0 disk </span><br><span class="line">├─sda1   8:1    0    1G  0 part /boot</span><br><span class="line">├─sda2   8:2    0  100G  0 part /</span><br><span class="line">├─sda3   8:3    0   50G  0 part /data</span><br><span class="line">├─sda4   8:4    0    1K  0 part </span><br><span class="line">└─sda5   8:5    0    4G  0 part [SWAP]</span><br><span class="line">sdb      8:16   0   20G  0 disk </span><br><span class="line">├─sdb1   8:17   0    2G  0 part /mnt/sdb1</span><br><span class="line">├─sdb2   8:18   0    4G  0 part /mnt/sdb2</span><br><span class="line">├─sdb3   8:19   0    1K  0 part </span><br><span class="line">├─sdb4   8:20   0    3G  0 part [SWAP]</span><br><span class="line">└─sdb5   8:21   0  500M  0 part /mnt/sdb5</span><br><span class="line">sr0     11:0    1   10G  0 rom  </span><br></pre></td></tr></table></figure>
-
-<h2 id="五、永久开机保存硬盘分区"><a href="#五、永久开机保存硬盘分区" class="headerlink" title="五、永久开机保存硬盘分区"></a>五、永久开机保存硬盘分区</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 /]<span class="comment">#vim /etc/fstab </span></span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 /<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#lsblk</span>
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda      8:0    0  200G  0 disk 
+├─sda1   8:1    0    1G  0 part /boot
+├─sda2   8:2    0  100G  0 part /
+├─sda3   8:3    0   50G  0 part /data
+├─sda4   8:4    0    1K  0 part 
+└─sda5   8:5    0    4G  0 part <span class="token punctuation">[</span>SWAP<span class="token punctuation">]</span>
+sdb      8:16   0   20G  0 disk 
+├─sdb1   8:17   0    2G  0 part /mnt/sdb1
+├─sdb2   8:18   0    4G  0 part /mnt/sdb2
+├─sdb3   8:19   0    1K  0 part 
+├─sdb4   8:20   0    3G  0 part <span class="token punctuation">[</span>SWAP<span class="token punctuation">]</span>
+└─sdb5   8:21   0  500M  0 part /mnt/sdb5
+sr0     11:0    1   10G  0 rom  
+</code></pre>
+<h2 id="五、永久开机保存硬盘分区"><a href="#五、永久开机保存硬盘分区" class="headerlink" title="五、永久开机保存硬盘分区"></a>五、永久开机保存硬盘分区</h2><pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 /<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#vim /etc/fstab </span>
+</code></pre>
 <p><img src="https://img-blog.csdnimg.cn/20191017125442474.png" alt="在这里插入图片描述">设备名/UUID/卷标    挂载路径    文件系统类型  默认选项  0表示不备份  0表示开机不检验</p>
 <p> 建议第一个使用UUID ,设备名可能会自动分配变化 卷标在加入其他硬盘时可能和别人的冲突</p>
 <p> 挂载可以是目录，可以是磁盘可以是光盘也可以是文件。</p>
@@ -247,34 +495,195 @@
 <p>LVM的全名是Logical Volume Manager（逻辑卷管理器），LVM的做法是将几个物理的分区（或磁盘）通过软件组合成为一块看起来是独立的大磁盘(VG)，然后将这块大磁盘再经过分成可使用分区(LV)，最终就能够挂载使用。但是为什么这样的系统可以进行文件系统的扩充或缩小呢？其实与一个称为PE的选项有关，下面是LVM中的几个概念：<br>　　1、PhysicalVolume,PV，物理卷<br>　　　　实际的分区需要调整系统标识符(system ID)成为8e(LVM的标识符)，然后再经过pvcreate的命令将它转为LVM最底层的物理卷(PV)，之后才能将这些PV加以利用，调整system ID的方法就是通过fdisk。<br>　　2、Volume Group，VG，卷用户组<br>　　　　LVM大磁盘就是将许多PV整合成这个VG，所以VG就是LVM组合起来的大磁盘。那么这个大磁盘最大可以达到多少容量呢？这与下面要说的PE有关，因为每个VG最多仅能包含65534个PE，如果使用LVM默认的参数，则一个VG最大 可达256G的容量<br>　　3、Physical Extend，PE，物理扩展块<br>　　　　LVM默认使用4MB的PE块，而LVM的VG最多仅能含有65534个PE，因此默认的LVMVG会有4M*65534/(1024M/G)=256G，PE是整个LVM最小的存储块，也就是说，其实文件数据都是由写入PE来处理的。简单的说，这个PE就是有点像文件系统里面的block大小。所以调整PE会影响VG的最大容量。<br>　　4、Logical Volume，LV，逻辑卷<br>　　　　最终的VG还会被切为LV，这个LV就是最后可以被格式化使用的类似分区。那么LV是否可以随意指定大小呢？当然不可以。既然PE是整个LVM的最小存储单位，那么LV的大小就与在此LV内的PE总数有关。为了方便用户利用LVM来管理系统，因此  LV的设备文件名那个通常指定为”/dev/vgname/lvname“的样式。</p>
 </blockquote>
 <p>#查看磁盘情况</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#lsblk</span></span><br><span class="line">NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT</span><br><span class="line">sda      8:0    0  200G  0 disk </span><br><span class="line">├─sda1   8:1    0    1G  0 part /boot</span><br><span class="line">├─sda2   8:2    0  100G  0 part /</span><br><span class="line">├─sda3   8:3    0   50G  0 part /data</span><br><span class="line">├─sda4   8:4    0    1K  0 part </span><br><span class="line">└─sda5   8:5    0    4G  0 part [SWAP]</span><br><span class="line">sdb      8:16   0   20G  0 disk </span><br><span class="line">├─sdb1   8:17   0    2G  0 part /mnt/sdb1</span><br><span class="line">├─sdb2   8:18   0    4G  0 part </span><br><span class="line">├─sdb3   8:19   0    1K  0 part </span><br><span class="line">├─sdb4   8:20   0    3G  0 part [SWAP]</span><br><span class="line">└─sdb5   8:21   0  500M  0 part /mnt/sdb5</span><br><span class="line">sr0     11:0    1   10G  0 rom </span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#lsblk</span>
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda      8:0    0  200G  0 disk 
+├─sda1   8:1    0    1G  0 part /boot
+├─sda2   8:2    0  100G  0 part /
+├─sda3   8:3    0   50G  0 part /data
+├─sda4   8:4    0    1K  0 part 
+└─sda5   8:5    0    4G  0 part <span class="token punctuation">[</span>SWAP<span class="token punctuation">]</span>
+sdb      8:16   0   20G  0 disk 
+├─sdb1   8:17   0    2G  0 part /mnt/sdb1
+├─sdb2   8:18   0    4G  0 part 
+├─sdb3   8:19   0    1K  0 part 
+├─sdb4   8:20   0    3G  0 part <span class="token punctuation">[</span>SWAP<span class="token punctuation">]</span>
+└─sdb5   8:21   0  500M  0 part /mnt/sdb5
+sr0     11:0    1   10G  0 rom 
+</code></pre>
 <p>用上面sdb2 4G 的分区来做LVM实验，第一步需要把sdb2 的文件系统改为逻辑卷的形式<br>逻辑卷的形式为：8e  Linux LVM （文件系统8e 代表逻辑卷）</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#fdisk /dev/sdb   #修改分区信息</span></span><br><span class="line">Welcome to fdisk (util-linux 2.23.2).</span><br><span class="line">Changes will remain <span class="keyword">in</span> memory only, until you decide to write them.</span><br><span class="line">Be careful before using the write <span class="built_in">command</span>.</span><br><span class="line"></span><br><span class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): t    <span class="comment">#输入命令 改变分区的文件系统</span></span><br><span class="line">Partition number (1-5, default 5): 2      <span class="comment">#选择哪一个分区 这里选择sdb2</span></span><br><span class="line">Hex code (<span class="built_in">type</span> L to list all codes): 8e   <span class="comment">#e文件系统8e 代表逻辑卷</span></span><br><span class="line">Changed <span class="built_in">type</span> of partition <span class="string">&#x27;Linux&#x27;</span> to <span class="string">&#x27;Linux LVM&#x27;</span></span><br><span class="line"></span><br><span class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): w    <span class="comment">#保存退出</span></span><br><span class="line">The partition table has been altered!</span><br><span class="line">Calling ioctl() to re-read partition table.</span><br><span class="line"></span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#fdisk -l /dev/sdb   #查看磁盘基本信息</span></span><br><span class="line">Disk /dev/sdb: 21.5 GB, 21474836480 bytes, 41943040 sectors</span><br><span class="line">Units = sectors of 1 * 512 = 512 bytes</span><br><span class="line">Sector size (logical/physical): 512 bytes / 512 bytes</span><br><span class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes</span><br><span class="line">Disk label <span class="built_in">type</span>: dos</span><br><span class="line">Disk identifier: 0xfaf696f9</span><br><span class="line">   Device Boot      Start         End      Blocks   Id  System</span><br><span class="line">/dev/sdb1            2048     4196351     2097152   83  Linux</span><br><span class="line">/dev/sdb2         4196352    12584959     4194304   8e  Linux LVM</span><br><span class="line"><span class="comment">#  8e linux LVM 文件系统以及修改成功</span></span><br><span class="line">/dev/sdb3        12584960    23070719     5242880    5  Extended</span><br><span class="line">/dev/sdb4        23070720    29362175     3145728   82  Linux swap / Solaris</span><br><span class="line">/dev/sdb5        12587008    13611007      512000   83  Linux</span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#fdisk /dev/sdb   #修改分区信息</span>
+Welcome to <span class="token function">fdisk</span> <span class="token punctuation">(</span>util-linux 2.23.2<span class="token punctuation">)</span>.
+Changes will remain <span class="token keyword">in</span> memory only, <span class="token keyword">until</span> you decide to <span class="token function">write</span> them.
+Be careful before using the <span class="token function">write</span> command.
+
+Command <span class="token punctuation">(</span>m <span class="token keyword">for</span> help<span class="token punctuation">)</span>: t    <span class="token comment" spellcheck="true">#输入命令 改变分区的文件系统</span>
+Partition number <span class="token punctuation">(</span>1-5, default 5<span class="token punctuation">)</span>: 2      <span class="token comment" spellcheck="true">#选择哪一个分区 这里选择sdb2</span>
+Hex code <span class="token punctuation">(</span>type L to list all codes<span class="token punctuation">)</span>: 8e   <span class="token comment" spellcheck="true">#e文件系统8e 代表逻辑卷</span>
+Changed <span class="token function">type</span> of partition <span class="token string">'Linux'</span> to <span class="token string">'Linux LVM'</span>
+
+Command <span class="token punctuation">(</span>m <span class="token keyword">for</span> help<span class="token punctuation">)</span>: w    <span class="token comment" spellcheck="true">#保存退出</span>
+The partition table has been altered<span class="token operator">!</span>
+Calling ioctl<span class="token punctuation">(</span><span class="token punctuation">)</span> to re-read partition table.
+
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#fdisk -l /dev/sdb   #查看磁盘基本信息</span>
+Disk /dev/sdb: 21.5 GB, 21474836480 bytes, 41943040 sectors
+Units <span class="token operator">=</span> sectors of 1 * 512 <span class="token operator">=</span> 512 bytes
+Sector size <span class="token punctuation">(</span>logical/physical<span class="token punctuation">)</span>: 512 bytes / 512 bytes
+I/O size <span class="token punctuation">(</span>minimum/optimal<span class="token punctuation">)</span>: 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0xfaf696f9
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdb1            2048     4196351     2097152   83  Linux
+/dev/sdb2         4196352    12584959     4194304   8e  Linux LVM
+<span class="token comment" spellcheck="true">#  8e linux LVM 文件系统以及修改成功</span>
+/dev/sdb3        12584960    23070719     5242880    5  Extended
+/dev/sdb4        23070720    29362175     3145728   82  Linux swap / Solaris
+/dev/sdb5        12587008    13611007      512000   83  Linux
+</code></pre>
 <p>准备工作已经完成，LVM可以使用硬盘，分区，也可以是两者的结合，其中如果是硬盘就不用修改文件系统ID，但是分区就要修改文件系统分区ID。<br>查看物理卷 pvs = pvdisplay</p>
 <p> 第一步创建物理卷</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#pvcreate /dev/sdb2   #创建物理卷</span></span><br><span class="line">WARNING: ext4 signature detected on /dev/sdb2 at offset 1080. Wipe it? [y/n]: y</span><br><span class="line">  Wiping ext4 signature on /dev/sdb2.</span><br><span class="line">  Physical volume <span class="string">&quot;/dev/sdb2&quot;</span> successfully created.</span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#pvs                  #查看物理卷</span></span><br><span class="line">  PV         VG  Fmt  Attr PSize PFree</span><br><span class="line">  /dev/sdb2      lvm2 ---  4.00g 4.00g</span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#pvdisplay            #查看物理卷</span></span><br><span class="line">  <span class="string">&quot;/dev/sdb2&quot;</span> is a new physical volume of <span class="string">&quot;4.00 GiB&quot;</span></span><br><span class="line">  --- NEW Physical volume ---</span><br><span class="line">  PV Name               /dev/sdb2</span><br><span class="line">  VG Name               </span><br><span class="line">  PV Size               4.00 GiB</span><br><span class="line">  Allocatable           NO</span><br><span class="line">  PE Size               0   </span><br><span class="line">  Total PE              0</span><br><span class="line">  Free PE               0</span><br><span class="line">  Allocated PE          0</span><br><span class="line">  PV UUID               48PZEj-U22C-Mj5m-UPVo-Z5Gq-UEQS-70xgkl</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#pvcreate /dev/sdb2   #创建物理卷</span>
+WARNING: ext4 signature detected on /dev/sdb2 at offset 1080. Wipe it? <span class="token punctuation">[</span>y/n<span class="token punctuation">]</span>: y
+  Wiping ext4 signature on /dev/sdb2.
+  Physical volume <span class="token string">"/dev/sdb2"</span> successfully created.
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#pvs                  #查看物理卷</span>
+  PV         VG  Fmt  Attr PSize PFree
+  /dev/sdb2      lvm2 ---  4.00g 4.00g
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#pvdisplay            #查看物理卷</span>
+  <span class="token string">"/dev/sdb2"</span> is a new physical volume of <span class="token string">"4.00 GiB"</span>
+  --- NEW Physical volume ---
+  PV Name               /dev/sdb2
+  VG Name               
+  PV Size               4.00 GiB
+  Allocatable           NO
+  PE Size               0   
+  Total PE              0
+  Free PE               0
+  Allocated PE          0
+  PV UUID               48PZEj-U22C-Mj5m-UPVo-Z5Gq-UEQS-70xgkl
+</code></pre>
 <p>第二步创建物理卷组<br>查看物理卷组vgs=vgdisplay</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#vgcreate -s 16M kaivi /dev/sdb2 </span></span><br><span class="line"><span class="comment">#创建物理卷组 -s 指定PE大小  kaivi卷组名字 后面是物理卷 </span></span><br><span class="line"><span class="comment">#多个的话空格隔开写到后面</span></span><br><span class="line">  Volume group <span class="string">&quot;kaivi&quot;</span> successfully created</span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#vgs            #查看物理卷组</span></span><br><span class="line">  VG    <span class="comment">#PV #LV #SN Attr   VSize VFree</span></span><br><span class="line">  kaivi   1   0   0 wz--n- 3.98g 3.98g</span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#vgdisplay      #查看物理卷组</span></span><br><span class="line">  --- Volume group ---</span><br><span class="line">  VG Name               kaivi</span><br><span class="line">  System ID             </span><br><span class="line">  Format                lvm2</span><br><span class="line">  Metadata Areas        1</span><br><span class="line">  Metadata Sequence No  2</span><br><span class="line">  VG Access             <span class="built_in">read</span>/write</span><br><span class="line">  VG Status             resizable</span><br><span class="line">  MAX LV                0</span><br><span class="line">  Cur LV                1</span><br><span class="line">  Open LV               1</span><br><span class="line">  Max PV                0</span><br><span class="line">  Cur PV                1</span><br><span class="line">  Act PV                1</span><br><span class="line">  VG Size               3.98 GiB</span><br><span class="line">  PE Size               16.00 MiB</span><br><span class="line">  Total PE              255</span><br><span class="line">  Alloc PE / Size       160 / 2.50 GiB</span><br><span class="line">  Free  PE / Size       95 / 1.48 GiB</span><br><span class="line">  VG UUID               YLQOHM-5G6l-gbTE-LguM-OUVD-AAnh-p5K7mE</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#vgcreate -s 16M kaivi /dev/sdb2 </span>
+<span class="token comment" spellcheck="true">#创建物理卷组 -s 指定PE大小  kaivi卷组名字 后面是物理卷 </span>
+<span class="token comment" spellcheck="true">#多个的话空格隔开写到后面</span>
+  Volume group <span class="token string">"kaivi"</span> successfully created
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#vgs            #查看物理卷组</span>
+  VG    <span class="token comment" spellcheck="true">#PV #LV #SN Attr   VSize VFree</span>
+  kaivi   1   0   0 wz--n- 3.98g 3.98g
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#vgdisplay      #查看物理卷组</span>
+  --- Volume group ---
+  VG Name               kaivi
+  System ID             
+  Format                lvm2
+  Metadata Areas        1
+  Metadata Sequence No  2
+  VG Access             read/write
+  VG Status             resizable
+  MAX LV                0
+  Cur LV                1
+  Open LV               1
+  Max PV                0
+  Cur PV                1
+  Act PV                1
+  VG Size               3.98 GiB
+  PE Size               16.00 MiB
+  Total PE              255
+  Alloc PE / Size       160 / 2.50 GiB
+  Free  PE / Size       95 / 1.48 GiB
+  VG UUID               YLQOHM-5G6l-gbTE-LguM-OUVD-AAnh-p5K7mE
+</code></pre>
 <p>第三步创建逻辑卷<br>查看逻辑卷 lvs=lvdisplay</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#lvcreate -n mysql -L 2.5G kaivi </span></span><br><span class="line"><span class="comment">#创建逻辑卷 -n 逻辑卷名字 -L 指定大小 用于那个物理卷组来创建</span></span><br><span class="line">  Logical volume <span class="string">&quot;mysql&quot;</span> created.</span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#lvs          #查看逻辑卷</span></span><br><span class="line">  LV    VG    Attr       LSize Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert</span><br><span class="line">  mysql kaivi -wi-a----- 2.50g                                                    </span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#lvdisplay    #查看逻辑卷</span></span><br><span class="line">  --- Logical volume ---</span><br><span class="line">  LV Path                /dev/kaivi/mysql</span><br><span class="line">  LV Name                mysql</span><br><span class="line">  VG Name                kaivi</span><br><span class="line">  LV UUID                h1Wabf-2yVb-wZKn-A2zR-2v9n-E0qa-0HwEQE</span><br><span class="line">  LV Write Access        <span class="built_in">read</span>/write</span><br><span class="line">  LV Creation host, time KAIVI7, 2019-10-17 16:26:11 +0800</span><br><span class="line">  LV Status              available</span><br><span class="line">  <span class="comment"># open                 0</span></span><br><span class="line">  LV Size                2.50 GiB</span><br><span class="line">  Current LE             160</span><br><span class="line">  Segments               1</span><br><span class="line">  Allocation             inherit</span><br><span class="line">  Read ahead sectors     auto</span><br><span class="line">  - currently <span class="built_in">set</span> to     8192</span><br><span class="line">  Block device           253:0</span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#lvcreate -n mysql -L 2.5G kaivi </span>
+<span class="token comment" spellcheck="true">#创建逻辑卷 -n 逻辑卷名字 -L 指定大小 用于那个物理卷组来创建</span>
+  Logical volume <span class="token string">"mysql"</span> created.
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#lvs          #查看逻辑卷</span>
+  LV    VG    Attr       LSize Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  mysql kaivi -wi-a----- 2.50g                                                    
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#lvdisplay    #查看逻辑卷</span>
+  --- Logical volume ---
+  LV Path                /dev/kaivi/mysql
+  LV Name                mysql
+  VG Name                kaivi
+  LV UUID                h1Wabf-2yVb-wZKn-A2zR-2v9n-E0qa-0HwEQE
+  LV Write Access        read/write
+  LV Creation host, <span class="token function">time</span> KAIVI7, 2019-10-17 16:26:11 +0800
+  LV Status              available
+  <span class="token comment" spellcheck="true"># open                 0</span>
+  LV Size                2.50 GiB
+  Current LE             160
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently <span class="token keyword">set</span> to     8192
+  Block device           253:0
+</code></pre>
 <p>#查看磁盘是否有了LVM逻辑卷</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#lsblk</span></span><br><span class="line">NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT</span><br><span class="line">sda               8:0    0  200G  0 disk </span><br><span class="line">├─sda1            8:1    0    1G  0 part /boot</span><br><span class="line">├─sda2            8:2    0  100G  0 part /</span><br><span class="line">├─sda3            8:3    0   50G  0 part /data</span><br><span class="line">├─sda4            8:4    0    1K  0 part </span><br><span class="line">└─sda5            8:5    0    4G  0 part [SWAP]</span><br><span class="line">sdb               8:16   0   20G  0 disk </span><br><span class="line">├─sdb1            8:17   0    2G  0 part /mnt/sdb1</span><br><span class="line">├─sdb2            8:18   0    4G  0 part </span><br><span class="line">│ └─kaivi-mysql 253:0    0  2.5G  0 lvm  </span><br><span class="line">├─sdb3            8:19   0    1K  0 part </span><br><span class="line">├─sdb4            8:20   0    3G  0 part [SWAP]</span><br><span class="line">└─sdb5            8:21   0  500M  0 part /mnt/sdb5</span><br><span class="line">sr0              11:0    1   10G  0 rom  </span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#lsblk</span>
+NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda               8:0    0  200G  0 disk 
+├─sda1            8:1    0    1G  0 part /boot
+├─sda2            8:2    0  100G  0 part /
+├─sda3            8:3    0   50G  0 part /data
+├─sda4            8:4    0    1K  0 part 
+└─sda5            8:5    0    4G  0 part <span class="token punctuation">[</span>SWAP<span class="token punctuation">]</span>
+sdb               8:16   0   20G  0 disk 
+├─sdb1            8:17   0    2G  0 part /mnt/sdb1
+├─sdb2            8:18   0    4G  0 part 
+│ └─kaivi-mysql 253:0    0  2.5G  0 lvm  
+├─sdb3            8:19   0    1K  0 part 
+├─sdb4            8:20   0    3G  0 part <span class="token punctuation">[</span>SWAP<span class="token punctuation">]</span>
+└─sdb5            8:21   0  500M  0 part /mnt/sdb5
+sr0              11:0    1   10G  0 rom  
+</code></pre>
 <p>查看磁盘 已经在sdb2 下有kaivi-mysql 的 逻辑卷</p>
 <p>第四步挂载<br>先创建一个新的文件夹，用于挂载</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#mkdir /mnt/mysql  #创建/mnt/mysql文件夹</span></span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#ll /mnt/</span></span><br><span class="line">total 0</span><br><span class="line">drwxr-xr-x 2 root root 6 Oct 17 16:32 mysql</span><br><span class="line">drwxr-xr-x 2 root root 6 Oct 17 10:25 sdb1</span><br><span class="line">drwxr-xr-x 2 root root 6 Oct 17 11:06 sdb2</span><br><span class="line">drwxr-xr-x 2 root root 6 Oct 17 10:34 sdb5</span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#mkdir /mnt/mysql  #创建/mnt/mysql文件夹</span>
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#ll /mnt/</span>
+total 0
+drwxr-xr-x 2 root root 6 Oct 17 16:32 mysql
+drwxr-xr-x 2 root root 6 Oct 17 10:25 sdb1
+drwxr-xr-x 2 root root 6 Oct 17 11:06 sdb2
+drwxr-xr-x 2 root root 6 Oct 17 10:34 sdb5
+</code></pre>
 <p>查看逻辑卷的UUID</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#vim /etc/fstab   #修改vim文件</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#blkid</span></span><br><span class="line">/dev/sr0: UUID=<span class="string">&quot;2018-11-26-14-22-58-00&quot;</span> LABEL=<span class="string">&quot;CentOS 7 x86_64&quot;</span> TYPE=<span class="string">&quot;iso9660&quot;</span> PTTYPE=<span class="string">&quot;dos&quot;</span> </span><br><span class="line">/dev/sda1: UUID=<span class="string">&quot;3cf92a9d-573a-4156-8ac5-c9bc543f286d&quot;</span> TYPE=<span class="string">&quot;xfs&quot;</span> </span><br><span class="line">/dev/sda2: UUID=<span class="string">&quot;c2317946-09ce-465c-860b-76733ea8ea79&quot;</span> TYPE=<span class="string">&quot;xfs&quot;</span> </span><br><span class="line">/dev/sda3: UUID=<span class="string">&quot;942c303c-c207-4624-9db0-cd2672225453&quot;</span> TYPE=<span class="string">&quot;xfs&quot;</span> </span><br><span class="line">/dev/sda5: UUID=<span class="string">&quot;c135b4be-ef58-489b-8cc2-47d33a02333d&quot;</span> TYPE=<span class="string">&quot;swap&quot;</span> </span><br><span class="line">/dev/sdb1: UUID=<span class="string">&quot;2e5bd3c8-6cae-4404-8ded-52fd48c84a71&quot;</span> TYPE=<span class="string">&quot;xfs&quot;</span> </span><br><span class="line">/dev/sdb2: UUID=<span class="string">&quot;48PZEj-U22C-Mj5m-UPVo-Z5Gq-UEQS-70xgkl&quot;</span> TYPE=<span class="string">&quot;LVM2_member&quot;</span> </span><br><span class="line">/dev/sdb4: UUID=<span class="string">&quot;11107269-94f9-44b4-b904-5e5fa130760e&quot;</span> TYPE=<span class="string">&quot;swap&quot;</span> </span><br><span class="line">/dev/sdb5: UUID=<span class="string">&quot;919d27cb-72f2-4830-b4a9-871059f17694&quot;</span> TYPE=<span class="string">&quot;xfs&quot;</span> </span><br><span class="line">/dev/mapper/kaivi-mysql: UUID=<span class="string">&quot;34f28200-b1cb-4cd2-b699-963233c61260&quot;</span> TYPE=<span class="string">&quot;ext4&quot;</span> </span><br></pre></td></tr></table></figure>
-
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#vim /etc/fstab   #修改vim文件</span>
+</code></pre>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#blkid</span>
+/dev/sr0: UUID<span class="token operator">=</span><span class="token string">"2018-11-26-14-22-58-00"</span> LABEL<span class="token operator">=</span><span class="token string">"CentOS 7 x86_64"</span> TYPE<span class="token operator">=</span><span class="token string">"iso9660"</span> PTTYPE<span class="token operator">=</span><span class="token string">"dos"</span> 
+/dev/sda1: UUID<span class="token operator">=</span><span class="token string">"3cf92a9d-573a-4156-8ac5-c9bc543f286d"</span> TYPE<span class="token operator">=</span><span class="token string">"xfs"</span> 
+/dev/sda2: UUID<span class="token operator">=</span><span class="token string">"c2317946-09ce-465c-860b-76733ea8ea79"</span> TYPE<span class="token operator">=</span><span class="token string">"xfs"</span> 
+/dev/sda3: UUID<span class="token operator">=</span><span class="token string">"942c303c-c207-4624-9db0-cd2672225453"</span> TYPE<span class="token operator">=</span><span class="token string">"xfs"</span> 
+/dev/sda5: UUID<span class="token operator">=</span><span class="token string">"c135b4be-ef58-489b-8cc2-47d33a02333d"</span> TYPE<span class="token operator">=</span><span class="token string">"swap"</span> 
+/dev/sdb1: UUID<span class="token operator">=</span><span class="token string">"2e5bd3c8-6cae-4404-8ded-52fd48c84a71"</span> TYPE<span class="token operator">=</span><span class="token string">"xfs"</span> 
+/dev/sdb2: UUID<span class="token operator">=</span><span class="token string">"48PZEj-U22C-Mj5m-UPVo-Z5Gq-UEQS-70xgkl"</span> TYPE<span class="token operator">=</span><span class="token string">"LVM2_member"</span> 
+/dev/sdb4: UUID<span class="token operator">=</span><span class="token string">"11107269-94f9-44b4-b904-5e5fa130760e"</span> TYPE<span class="token operator">=</span><span class="token string">"swap"</span> 
+/dev/sdb5: UUID<span class="token operator">=</span><span class="token string">"919d27cb-72f2-4830-b4a9-871059f17694"</span> TYPE<span class="token operator">=</span><span class="token string">"xfs"</span> 
+/dev/mapper/kaivi-mysql: UUID<span class="token operator">=</span><span class="token string">"34f28200-b1cb-4cd2-b699-963233c61260"</span> TYPE<span class="token operator">=</span><span class="token string">"ext4"</span> 
+</code></pre>
 <p><img src="https://img-blog.csdnimg.cn/20191017171646297.png" alt="在这里插入图片描述"><br>新增最后一行，使用UUID方式进行标定</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#mount -a    #触发挂载</span></span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#df -T</span></span><br><span class="line">Filesystem              Type     1K-blocks    Used Available Use% Mounted on</span><br><span class="line">/dev/sda2               xfs      104806400 4456312 100350088   5% /</span><br><span class="line">devtmpfs                devtmpfs    721776       0    721776   0% /dev</span><br><span class="line">tmpfs                   tmpfs       737576       0    737576   0% /dev/shm</span><br><span class="line">tmpfs                   tmpfs       737576   10220    727356   2% /run</span><br><span class="line">tmpfs                   tmpfs       737576       0    737576   0% /sys/fs/cgroup</span><br><span class="line">/dev/sdb5               xfs         508580   25824    482756   6% /mnt/sdb5</span><br><span class="line">/dev/sdb1               xfs        2086912   32992   2053920   2% /mnt/sdb1</span><br><span class="line">/dev/sda1               xfs        1038336  166952    871384  17% /boot</span><br><span class="line">/dev/sda3               xfs       52403200   33880  52369320   1% /data</span><br><span class="line">tmpfs                   tmpfs       147516       0    147516   0% /run/user/0</span><br><span class="line">/dev/mapper/kaivi-mysql ext4       2514736    7680   2359600   1% /mnt/mysql</span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#mount -a    #触发挂载</span>
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#df -T</span>
+Filesystem              Type     1K-blocks    Used Available Use% Mounted on
+/dev/sda2               xfs      104806400 4456312 100350088   5% /
+devtmpfs                devtmpfs    721776       0    721776   0% /dev
+tmpfs                   tmpfs       737576       0    737576   0% /dev/shm
+tmpfs                   tmpfs       737576   10220    727356   2% /run
+tmpfs                   tmpfs       737576       0    737576   0% /sys/fs/cgroup
+/dev/sdb5               xfs         508580   25824    482756   6% /mnt/sdb5
+/dev/sdb1               xfs        2086912   32992   2053920   2% /mnt/sdb1
+/dev/sda1               xfs        1038336  166952    871384  17% /boot
+/dev/sda3               xfs       52403200   33880  52369320   1% /data
+tmpfs                   tmpfs       147516       0    147516   0% /run/user/0
+/dev/mapper/kaivi-mysql ext4       2514736    7680   2359600   1% /mnt/mysql
+</code></pre>
 <p>最后一行显示磁盘中已经成功挂载<br>对应的映射都是一样的软连接，如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@KAIVI7 ~]<span class="comment">#ll /dev/kaivi/mysql </span></span><br><span class="line">lrwxrwxrwx 1 root root 7 Oct 17 16:29 /dev/kaivi/mysql -&gt; ../dm-0 </span><br><span class="line">[root@KAIVI7 ~]<span class="comment">#ll /dev/mapper/kaivi-mysql </span></span><br><span class="line">lrwxrwxrwx 1 root root 7 Oct 17 16:29 /dev/mapper/kaivi-mysql -&gt; ../dm-0</span><br><span class="line"><span class="comment">#设备映射</span></span><br></pre></td></tr></table></figure>
-
-
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#ll /dev/kaivi/mysql </span>
+lrwxrwxrwx 1 root root 7 Oct 17 16:29 /dev/kaivi/mysql -<span class="token operator">></span> <span class="token punctuation">..</span>/dm-0 
+<span class="token punctuation">[</span>root@KAIVI7 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#ll /dev/mapper/kaivi-mysql </span>
+lrwxrwxrwx 1 root root 7 Oct 17 16:29 /dev/mapper/kaivi-mysql -<span class="token operator">></span> <span class="token punctuation">..</span>/dm-0
+<span class="token comment" spellcheck="true">#设备映射</span>
+</code></pre>
 
     </div>
 
@@ -374,6 +783,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/kai25@michaels.com" title="E-Mail → kai25@michaels.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
 
 
 

@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="Production deployment Rabbitmq and HA of images">
@@ -35,6 +35,7 @@
 <meta property="article:published_time" content="2021-11-13T06:11:34.990Z">
 <meta property="article:modified_time" content="2021-11-13T06:40:08.695Z">
 <meta property="article:author" content="Kaivi">
+<meta property="article:tag" content="Linux life">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200628143717813.png">
 
@@ -82,7 +83,7 @@
   </style>
 </noscript>
 
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -105,6 +106,7 @@
       <h1 class="site-title">Kaivi'Blogs</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
+      <p class="site-subtitle" itemprop="description">Be yourself, Be better</p>
   </div>
 
   <div class="site-nav-right">
@@ -226,8 +228,8 @@
 </tr>
 </tbody></table>
 <h3 id="部署前准备"><a href="#部署前准备" class="headerlink" title="部署前准备"></a>部署前准备</h3><p> 每一台服务都都要做部署前准备检查。<br> 通过堡垒机进到服务器列表找对应的服务器，但是默认给到的权限是普通权限不是root<br> 这里可以通过su命令进行身份的切换</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ su - root</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-bash"><code class="language-bash">$ <span class="token function">su</span> - root
+</code></pre>
 <table>
 <thead>
 <tr>
@@ -248,49 +250,399 @@
 <td></td>
 </tr>
 </tbody></table>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># cd /home/xtgl/</span></span><br><span class="line">[root@uias-pro-1-rabbitmq xtgl]<span class="comment"># ll</span></span><br><span class="line">total 95792</span><br><span class="line">-rw-r--r-- 1 xtgl xtgl 86444982 Jun 26 15:27 otp_src_22.0.tar.gz</span><br><span class="line">-rw-r--r-- 1 xtgl xtgl 11642480 Jun 26 14:13 rabbitmq-server-generic-unix-3.8.2.tar.xz</span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq xtgl]<span class="comment"># mv otp_src_22.0.tar.gz rabbitmq-server-generic-unix-3.8.2.tar.xz /usr/local/src/ </span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cd /home/xtgl/</span>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq xtgl<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ll</span>
+total 95792
+-rw-r--r-- 1 xtgl xtgl 86444982 Jun 26 15:27 otp_src_22.0.tar.gz
+-rw-r--r-- 1 xtgl xtgl 11642480 Jun 26 14:13 rabbitmq-server-generic-unix-3.8.2.tar.xz
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq xtgl<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># mv otp_src_22.0.tar.gz rabbitmq-server-generic-unix-3.8.2.tar.xz /usr/local/src/ </span>
+</code></pre>
 <h2 id="安装部署"><a href="#安装部署" class="headerlink" title="安装部署"></a>安装部署</h2><h3 id="修改hosts表"><a href="#修改hosts表" class="headerlink" title="修改hosts表"></a>修改hosts表</h3><p>2台部署机器都需要执行<br>添加两行，保证两台机器能互相ping通主机名</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># vim /etc/hosts       #后面增加</span></span><br><span class="line">······           </span><br><span class="line">10.252.71.82 uias-pro-1-rabbitmq</span><br><span class="line">10.252.71.83 uias-pro-2-rabbitmq</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># vim /etc/hosts       #后面增加</span>
+······           
+10.252.71.82 uias-pro-1-rabbitmq
+10.252.71.83 uias-pro-2-rabbitmq
+</code></pre>
 <p>相互直接能ping通</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#在机器10.252.71.82</span></span><br><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># ping uias-pro-2-rabbitmq</span></span><br><span class="line">PING uias-pro-2-rabbitmq (10.252.71.83) 56(84) bytes of data.</span><br><span class="line">64 bytes from uias-pro-2-rabbitmq (10.252.71.83): icmp_seq=1 ttl=64 time=0.295 ms</span><br><span class="line">64 bytes from uias-pro-2-rabbitmq (10.252.71.83): icmp_seq=2 ttl=64 time=0.300 ms</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#在机器10.252.71.83</span></span><br><span class="line">[root@uias-pro-2-rabbitmq ~]<span class="comment"># ping uias-pro-1-rabbitmq</span></span><br><span class="line">PING uias-pro-1-rabbitmq (10.252.71.82) 56(84) bytes of data.</span><br><span class="line">64 bytes from uias-pro-1-rabbitmq (10.252.71.82): icmp_seq=1 ttl=64 time=0.308 ms</span><br><span class="line">64 bytes from uias-pro-1-rabbitmq (10.252.71.82): icmp_seq=2 ttl=64 time=0.349 ms</span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#在机器10.252.71.82</span>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ping uias-pro-2-rabbitmq</span>
+PING uias-pro-2-rabbitmq <span class="token punctuation">(</span>10.252.71.83<span class="token punctuation">)</span> 56<span class="token punctuation">(</span>84<span class="token punctuation">)</span> bytes of data.
+64 bytes from uias-pro-2-rabbitmq <span class="token punctuation">(</span>10.252.71.83<span class="token punctuation">)</span>: icmp_seq<span class="token operator">=</span>1 ttl<span class="token operator">=</span>64 time<span class="token operator">=</span>0.295 ms
+64 bytes from uias-pro-2-rabbitmq <span class="token punctuation">(</span>10.252.71.83<span class="token punctuation">)</span>: icmp_seq<span class="token operator">=</span>2 ttl<span class="token operator">=</span>64 time<span class="token operator">=</span>0.300 ms
+
+
+<span class="token comment" spellcheck="true">#在机器10.252.71.83</span>
+<span class="token punctuation">[</span>root@uias-pro-2-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ping uias-pro-1-rabbitmq</span>
+PING uias-pro-1-rabbitmq <span class="token punctuation">(</span>10.252.71.82<span class="token punctuation">)</span> 56<span class="token punctuation">(</span>84<span class="token punctuation">)</span> bytes of data.
+64 bytes from uias-pro-1-rabbitmq <span class="token punctuation">(</span>10.252.71.82<span class="token punctuation">)</span>: icmp_seq<span class="token operator">=</span>1 ttl<span class="token operator">=</span>64 time<span class="token operator">=</span>0.308 ms
+64 bytes from uias-pro-1-rabbitmq <span class="token punctuation">(</span>10.252.71.82<span class="token punctuation">)</span>: icmp_seq<span class="token operator">=</span>2 ttl<span class="token operator">=</span>64 time<span class="token operator">=</span>0.349 ms
+</code></pre>
 <h3 id="安装jdk"><a href="#安装jdk" class="headerlink" title="安装jdk"></a>安装jdk</h3><p>2台部署机器都需要执行<br>这里服务器的JDK环境已经部署，要求版本至少要1.8</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># java -version</span></span><br><span class="line">openjdk version <span class="string">&quot;1.8.0_252&quot;</span></span><br><span class="line">OpenJDK Runtime Environment (build 1.8.0_252-b09)</span><br><span class="line">OpenJDK 64-Bit Server VM (build 25.252-b09, mixed mode)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@uias-pro-2-rabbitmq ~]<span class="comment"># java -version</span></span><br><span class="line">openjdk version <span class="string">&quot;1.8.0_252&quot;</span></span><br><span class="line">OpenJDK Runtime Environment (build 1.8.0_252-b09)</span><br><span class="line">OpenJDK 64-Bit Server VM (build 25.252-b09, mixed mode)</span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># java -version</span>
+openjdk version <span class="token string">"1.8.0_252"</span>
+OpenJDK Runtime Environment <span class="token punctuation">(</span>build 1.8.0_252-b09<span class="token punctuation">)</span>
+OpenJDK 64-Bit Server VM <span class="token punctuation">(</span>build 25.252-b09, mixed mode<span class="token punctuation">)</span>
+
+
+<span class="token punctuation">[</span>root@uias-pro-2-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># java -version</span>
+openjdk version <span class="token string">"1.8.0_252"</span>
+OpenJDK Runtime Environment <span class="token punctuation">(</span>build 1.8.0_252-b09<span class="token punctuation">)</span>
+OpenJDK 64-Bit Server VM <span class="token punctuation">(</span>build 25.252-b09, mixed mode<span class="token punctuation">)</span>
+</code></pre>
 <p>如果没有jdk环境可自行百度搜索进行安装部署。</p>
 <h3 id="配置erlang环境"><a href="#配置erlang环境" class="headerlink" title="配置erlang环境"></a>配置erlang环境</h3><p>2台部署机器都需要执行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装依赖安装命令</span></span><br><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># yum -y install gcc glibc-devel make </span></span><br><span class="line">ncurses-devel openssl-devel xmlto perl wget gtk2-devel binutils-devel   </span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># cd /usr/local/src/          #把上传的erlang安装包移动或者拷贝到这个文件夹</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq src]<span class="comment"># ll</span></span><br><span class="line">total 95792</span><br><span class="line">-rw-r--r-- 1 root root 86444982 Jun 26 15:36 otp_src_22.0.tar.gz          <span class="comment">#erlang部署安装包</span></span><br><span class="line">-rw-r--r-- 1 root root 11642480 Jun 26 15:37 rabbitmq-server-generic-unix-3.8.2.tar.xz</span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq src]<span class="comment"># tar -zxvf otp_src_22.0.tar.gz     #解压</span></span><br><span class="line"> </span><br><span class="line">[root@uias-pro-1-rabbitmq src]<span class="comment"># mv otp_src_22.0 /usr/local/       #把解压后的目录单独移动到/usr/local/下</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq src]<span class="comment"># cd /usr/local/otp_src_22.0</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq otp_src_22.0]<span class="comment"># mkdir /usr/local/erlang -p      #创建之后编译用到的文件安装目录</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq otp_src_22.0]<span class="comment"># ./configure --prefix=/usr/local/erlang   #编译安装并且指定到上一步创建的安装目录</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq otp_src_22.0]<span class="comment"># make install    #安装</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq otp_src_22.0]<span class="comment"># echo $?       #检测是否编译安装成功  为0表示成功</span></span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#安装依赖安装命令</span>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum -y install gcc glibc-devel make </span>
+ncurses-devel openssl-devel xmlto perl <span class="token function">wget</span> gtk2-devel binutils-devel   
 
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq otp_src_22.0]<span class="comment"># ll /usr/local/erlang/bin/        #查看执行程序是否有</span></span><br><span class="line">total 0</span><br><span class="line">lrwxrwxrwx 1 root root 24 Jun 26 15:48 ct_run -&gt; ../lib/erlang/bin/ct_run</span><br><span class="line">lrwxrwxrwx 1 root root 26 Jun 26 15:48 dialyzer -&gt; ../lib/erlang/bin/dialyzer</span><br><span class="line">lrwxrwxrwx 1 root root 22 Jun 26 15:48 epmd -&gt; ../lib/erlang/bin/epmd</span><br><span class="line">lrwxrwxrwx 1 root root 21 Jun 26 15:48 erl -&gt; ../lib/erlang/bin/erl</span><br><span class="line">lrwxrwxrwx 1 root root 22 Jun 26 15:48 erlc -&gt; ../lib/erlang/bin/erlc</span><br><span class="line">lrwxrwxrwx 1 root root 25 Jun 26 15:48 escript -&gt; ../lib/erlang/bin/escript</span><br><span class="line">lrwxrwxrwx 1 root root 25 Jun 26 15:48 run_erl -&gt; ../lib/erlang/bin/run_erl</span><br><span class="line">lrwxrwxrwx 1 root root 24 Jun 26 15:48 to_erl -&gt; ../lib/erlang/bin/to_erl</span><br><span class="line">lrwxrwxrwx 1 root root 23 Jun 26 15:48 typer -&gt; ../lib/erlang/bin/typer</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#修改PATH变量</span></span><br><span class="line">[root@uias-pro-1-rabbitmq otp_src_22.0]<span class="comment"># echo &quot;export PATH=$PATH:/usr/local/erlang/bin&quot;&gt;&gt; /etc/profile</span></span><br><span class="line">[root@uias-pro-1-rabbitmq otp_src_22.0]<span class="comment"># erl</span></span><br><span class="line">bash: erl: <span class="built_in">command</span> not found...</span><br><span class="line">[root@uias-pro-1-rabbitmq otp_src_22.0]<span class="comment"># source /etc/profile</span></span><br><span class="line">[root@uias-pro-1-rabbitmq otp_src_22.0]<span class="comment"># erl</span></span><br><span class="line">Erlang/OTP 22 [erts-10.4] [<span class="built_in">source</span>] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:1] [hipe]</span><br><span class="line"></span><br><span class="line">Eshell V10.4  (abort with ^G)</span><br><span class="line">1&gt; </span><br><span class="line">1&gt; halt().       <span class="comment">#退出erl终端</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># erl -version         #查看版本，查得到表示安装成功</span></span><br><span class="line">Erlang (SMP,ASYNC_THREADS,HIPE) (BEAM) emulator version 10.4</span><br></pre></td></tr></table></figure>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cd /usr/local/src/          #把上传的erlang安装包移动或者拷贝到这个文件夹</span>
 
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq src<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ll</span>
+total 95792
+-rw-r--r-- 1 root root 86444982 Jun 26 15:36 otp_src_22.0.tar.gz          <span class="token comment" spellcheck="true">#erlang部署安装包</span>
+-rw-r--r-- 1 root root 11642480 Jun 26 15:37 rabbitmq-server-generic-unix-3.8.2.tar.xz
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq src<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># tar -zxvf otp_src_22.0.tar.gz     #解压</span>
+ 
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq src<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># mv otp_src_22.0 /usr/local/       #把解压后的目录单独移动到/usr/local/下</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq src<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cd /usr/local/otp_src_22.0</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq otp_src_22.0<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># mkdir /usr/local/erlang -p      #创建之后编译用到的文件安装目录</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq otp_src_22.0<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ./configure --prefix=/usr/local/erlang   #编译安装并且指定到上一步创建的安装目录</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq otp_src_22.0<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># make install    #安装</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq otp_src_22.0<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># echo $?       #检测是否编译安装成功  为0表示成功</span>
+0
+</code></pre>
+<pre class=" language-bash"><code class="language-bash">
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq otp_src_22.0<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ll /usr/local/erlang/bin/        #查看执行程序是否有</span>
+total 0
+lrwxrwxrwx 1 root root 24 Jun 26 15:48 ct_run -<span class="token operator">></span> <span class="token punctuation">..</span>/lib/erlang/bin/ct_run
+lrwxrwxrwx 1 root root 26 Jun 26 15:48 dialyzer -<span class="token operator">></span> <span class="token punctuation">..</span>/lib/erlang/bin/dialyzer
+lrwxrwxrwx 1 root root 22 Jun 26 15:48 epmd -<span class="token operator">></span> <span class="token punctuation">..</span>/lib/erlang/bin/epmd
+lrwxrwxrwx 1 root root 21 Jun 26 15:48 erl -<span class="token operator">></span> <span class="token punctuation">..</span>/lib/erlang/bin/erl
+lrwxrwxrwx 1 root root 22 Jun 26 15:48 erlc -<span class="token operator">></span> <span class="token punctuation">..</span>/lib/erlang/bin/erlc
+lrwxrwxrwx 1 root root 25 Jun 26 15:48 escript -<span class="token operator">></span> <span class="token punctuation">..</span>/lib/erlang/bin/escript
+lrwxrwxrwx 1 root root 25 Jun 26 15:48 run_erl -<span class="token operator">></span> <span class="token punctuation">..</span>/lib/erlang/bin/run_erl
+lrwxrwxrwx 1 root root 24 Jun 26 15:48 to_erl -<span class="token operator">></span> <span class="token punctuation">..</span>/lib/erlang/bin/to_erl
+lrwxrwxrwx 1 root root 23 Jun 26 15:48 typer -<span class="token operator">></span> <span class="token punctuation">..</span>/lib/erlang/bin/typer
+
+
+<span class="token comment" spellcheck="true">#修改PATH变量</span>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq otp_src_22.0<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># echo "export PATH=$PATH:/usr/local/erlang/bin">> /etc/profile</span>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq otp_src_22.0<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># erl</span>
+bash: erl: <span class="token function">command</span> not found<span class="token punctuation">..</span>.
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq otp_src_22.0<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># source /etc/profile</span>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq otp_src_22.0<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># erl</span>
+Erlang/OTP 22 <span class="token punctuation">[</span>erts-10.4<span class="token punctuation">]</span> <span class="token punctuation">[</span>source<span class="token punctuation">]</span> <span class="token punctuation">[</span>64-bit<span class="token punctuation">]</span> <span class="token punctuation">[</span>smp:4:4<span class="token punctuation">]</span> <span class="token punctuation">[</span>ds:4:4:10<span class="token punctuation">]</span> <span class="token punctuation">[</span>async-threads:1<span class="token punctuation">]</span> <span class="token punctuation">[</span>hipe<span class="token punctuation">]</span>
+
+Eshell V10.4  <span class="token punctuation">(</span>abort with ^G<span class="token punctuation">)</span>
+1<span class="token operator">></span> 
+1<span class="token operator">></span> halt<span class="token punctuation">(</span><span class="token punctuation">)</span>.       <span class="token comment" spellcheck="true">#退出erl终端</span>
+
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># erl -version         #查看版本，查得到表示安装成功</span>
+Erlang <span class="token punctuation">(</span>SMP,ASYNC_THREADS,HIPE<span class="token punctuation">)</span> <span class="token punctuation">(</span>BEAM<span class="token punctuation">)</span> emulator version 10.4
+</code></pre>
 <h3 id="安装部署rabbitmq"><a href="#安装部署rabbitmq" class="headerlink" title="安装部署rabbitmq"></a>安装部署rabbitmq</h3><p>2台部署机器都需要执行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-1-rabbitmq otp_src_22.0]<span class="comment"># cd</span></span><br><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># cd /usr/local/src/</span></span><br><span class="line">[root@uias-pro-1-rabbitmq src]<span class="comment"># ll</span></span><br><span class="line">total 95792</span><br><span class="line">-rw-r--r-- 1 root root 86444982 Jun 26 15:36 otp_src_22.0.tar.gz</span><br><span class="line">-rw-r--r-- 1 root root 11642480 Jun 26 15:37 rabbitmq-server-generic-unix-3.8.2.tar.xz</span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq src]<span class="comment"># xz -d rabbitmq-server-generic-unix-3.8.2.tar.xz #先解压xz后缀文件变成tar后缀文件</span></span><br><span class="line">[root@uias-pro-1-rabbitmq src]<span class="comment"># ll</span></span><br><span class="line">total 97820</span><br><span class="line">-rw-r--r-- 1 root root 86444982 Jun 26 15:36 otp_src_22.0.tar.gz</span><br><span class="line">-rw-r--r-- 1 root root 13721600 Jun 26 15:37 rabbitmq-server-generic-unix-3.8.2.tar</span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq src]<span class="comment"># tar -xvf rabbitmq-server-generic-unix-3.8.2.tar</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq src]<span class="comment"># mv rabbitmq_server-3.8.2/ /usr/local/</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq src]<span class="comment"># cd /usr/local/</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq <span class="built_in">local</span>]<span class="comment"># mv rabbitmq_server-3.8.2 rabbitmq     #修改一下名称</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq <span class="built_in">local</span>]<span class="comment"># cd rabbitmq/sbin/      #可执行文件目录</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># pwd</span></span><br><span class="line">/usr/<span class="built_in">local</span>/rabbitmq/sbin</span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># ll</span></span><br><span class="line">total 564</span><br><span class="line">-rwxr-xr-x 1 root root 508786 Dec  2  2019 cuttlefish</span><br><span class="line">-rwxr-xr-x 1 root root   1236 Dec  2  2019 rabbitmqctl</span><br><span class="line">-rwxr-xr-x 1 root root   2058 Dec  2  2019 rabbitmq-defaults</span><br><span class="line">-rwxr-xr-x 1 root root   1245 Dec  2  2019 rabbitmq-diagnostics</span><br><span class="line">-rwxr-xr-x 1 root root  17035 Dec  2  2019 rabbitmq-env</span><br><span class="line">-rwxr-xr-x 1 root root   1241 Dec  2  2019 rabbitmq-plugins</span><br><span class="line">-rwxr-xr-x 1 root root   1240 Dec  2  2019 rabbitmq-queues</span><br><span class="line">-rwxr-xr-x 1 root root  16704 Dec  2  2019 rabbitmq-server</span><br><span class="line">-rwxr-xr-x 1 root root   1241 Dec  2  2019 rabbitmq-upgrade</span><br><span class="line"></span><br><span class="line"><span class="comment">#配置环境变量</span></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># echo &#x27;export PATH=$PATH:/usr/local/rabbitmq/sbin&#x27; &gt;&gt; /etc/profile</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># source /etc/profile    #使得环境变量生效</span></span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-1-rabbitmq otp_src_22.0<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cd</span>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cd /usr/local/src/</span>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq src<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ll</span>
+total 95792
+-rw-r--r-- 1 root root 86444982 Jun 26 15:36 otp_src_22.0.tar.gz
+-rw-r--r-- 1 root root 11642480 Jun 26 15:37 rabbitmq-server-generic-unix-3.8.2.tar.xz
 
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># pwd</span></span><br><span class="line">/usr/<span class="built_in">local</span>/rabbitmq/sbin</span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># rabbitmq-server -detached     ##启动rabbitmq</span></span><br><span class="line"> Warning: PID file not written; -detached was passed.</span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># ps -ef |grep rabbitmq      #查看是否起来以及对于的pid</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># rabbitmq-plugins enable rabbitmq_management     #启动rabbitmq页面管理</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># vim /usr/local/rabbitmq/ebin/rabbit.app   #修改允许远程web访问</span></span><br><span class="line">39   &#123;server_properties, []&#125;,          <span class="comment">#第39行</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq src<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># xz -d rabbitmq-server-generic-unix-3.8.2.tar.xz #先解压xz后缀文件变成tar后缀文件</span>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq src<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ll</span>
+total 97820
+-rw-r--r-- 1 root root 86444982 Jun 26 15:36 otp_src_22.0.tar.gz
+-rw-r--r-- 1 root root 13721600 Jun 26 15:37 rabbitmq-server-generic-unix-3.8.2.tar
 
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># ss -ntl |grep 5672     #默认端口为5672（单机服务） </span></span><br><span class="line">15672（集群web管理） 25672（rabbitmq服务的DNS）</span><br><span class="line">LISTEN     0      128          *:15672                    *:*                  </span><br><span class="line">LISTEN     0      128          *:25672                    *:*                  </span><br><span class="line">LISTEN     0      128       [::]:5672                  [::]:*    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#由于之前启动之前没有配置web页面和允许远程web访问，所以现在关闭服务，进行重启</span></span><br><span class="line">这里可以直接杀死对应的rabbitmq的进程方式也可以直接用rabbitmq自带的命令进行停止</span><br><span class="line"><span class="built_in">kill</span> -9 PID</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment">#  rabbitmqctl stop_app        #停止服务</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># rabbitmq-server -detached    #启动服务</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq src<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># tar -xvf rabbitmq-server-generic-unix-3.8.2.tar</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq src<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># mv rabbitmq_server-3.8.2/ /usr/local/</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq src<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cd /usr/local/</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq local<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># mv rabbitmq_server-3.8.2 rabbitmq     #修改一下名称</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq local<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cd rabbitmq/sbin/      #可执行文件目录</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># pwd</span>
+/usr/local/rabbitmq/sbin
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ll</span>
+total 564
+-rwxr-xr-x 1 root root 508786 Dec  2  2019 cuttlefish
+-rwxr-xr-x 1 root root   1236 Dec  2  2019 rabbitmqctl
+-rwxr-xr-x 1 root root   2058 Dec  2  2019 rabbitmq-defaults
+-rwxr-xr-x 1 root root   1245 Dec  2  2019 rabbitmq-diagnostics
+-rwxr-xr-x 1 root root  17035 Dec  2  2019 rabbitmq-env
+-rwxr-xr-x 1 root root   1241 Dec  2  2019 rabbitmq-plugins
+-rwxr-xr-x 1 root root   1240 Dec  2  2019 rabbitmq-queues
+-rwxr-xr-x 1 root root  16704 Dec  2  2019 rabbitmq-server
+-rwxr-xr-x 1 root root   1241 Dec  2  2019 rabbitmq-upgrade
+
+<span class="token comment" spellcheck="true">#配置环境变量</span>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># echo 'export PATH=$PATH:/usr/local/rabbitmq/sbin' >> /etc/profile</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># source /etc/profile    #使得环境变量生效</span>
+</code></pre>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># pwd</span>
+/usr/local/rabbitmq/sbin
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmq-server -detached     ##启动rabbitmq</span>
+ Warning: PID <span class="token function">file</span> not written<span class="token punctuation">;</span> -detached was passed.
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ps -ef |grep rabbitmq      #查看是否起来以及对于的pid</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmq-plugins enable rabbitmq_management     #启动rabbitmq页面管理</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># vim /usr/local/rabbitmq/ebin/rabbit.app   #修改允许远程web访问</span>
+39   <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;server_properties, []&amp;#125;,          #第39行</span>
+
+</code></pre>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ss -ntl |grep 5672     #默认端口为5672（单机服务） </span>
+15672（集群web管理） 25672（rabbitmq服务的DNS）
+LISTEN     0      128          *:15672                    *:*                  
+LISTEN     0      128          *:25672                    *:*                  
+LISTEN     0      128       <span class="token punctuation">[</span>::<span class="token punctuation">]</span>:5672                  <span class="token punctuation">[</span>::<span class="token punctuation">]</span>:*    
+
+
+<span class="token comment" spellcheck="true">#由于之前启动之前没有配置web页面和允许远程web访问，所以现在关闭服务，进行重启</span>
+这里可以直接杀死对应的rabbitmq的进程方式也可以直接用rabbitmq自带的命令进行停止
+<span class="token function">kill</span> -9 PID
+
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#  rabbitmqctl stop_app        #停止服务</span>
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmq-server -detached    #启动服务</span>
+</code></pre>
 <p>访问单机配置：<a target="_blank" rel="noopener" href="http://ip:15672/">http://IP:15672</a><br>rabbitmq默认登入的账号和口令都是guest，但是好像只能在本机才能登入。</p>
 <p>同样的方式，在第二台机器上面也需要同样的进行单机部署</p>
 <h2 id="集群部署rabbitmq"><a href="#集群部署rabbitmq" class="headerlink" title="集群部署rabbitmq"></a>集群部署rabbitmq</h2><h3 id="同步erlang-cookie"><a href="#同步erlang-cookie" class="headerlink" title="同步erlang.cookie"></a>同步erlang.cookie</h3><p>同步uias-pro-1-rabbitmq机器的.erlang.cookie文件到uias-pro-2-rabbitmq，保证两台机器互相通信，.erlang.cookie文件一般位于$HOME下<br>默认文件是400的权限，这里为了执行方便修改为600权限</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># cd</span></span><br><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># pwd</span></span><br><span class="line">/root</span><br><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># echo $HOME</span></span><br><span class="line">/root</span><br><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># chmod 600 .erlang.cookie  #修改权限</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># ll .erlang.cookie </span></span><br><span class="line">-rw------- 1 root root 20 Jun 26 00:00 .erlang.cookie</span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cd</span>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># pwd</span>
+/root
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># echo $HOME</span>
+/root
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># chmod 600 .erlang.cookie  #修改权限</span>
 
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># scp .erlang.cookie root@10.252.71.83:/root/</span></span><br><span class="line"></span><br><span class="line">查看2台服务器的.erlang.cookie文件，必须保证一致，不能有换行符或者回车符号</span><br><span class="line">[root@uias-pro-1-rabbitmq ~]<span class="comment"># cat .erlang.cookie </span></span><br><span class="line">XDNIPVYESMANFEQOFFAQ[root@uias-pro-1-rabbitmq ~]<span class="comment">#</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-2-rabbitmq ~]<span class="comment"># cat .erlang.cookie </span></span><br><span class="line">XDNIPVYESMANFEQOFFAQ[root@uias-pro-2-rabbitmq ~]<span class="comment"># </span></span><br></pre></td></tr></table></figure>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ll .erlang.cookie </span>
+-rw------- 1 root root 20 Jun 26 00:00 .erlang.cookie
+</code></pre>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># scp .erlang.cookie root@10.252.71.83:/root/</span>
+
+查看2台服务器的.erlang.cookie文件，必须保证一致，不能有换行符或者回车符号
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cat .erlang.cookie </span>
+XDNIPVYESMANFEQOFFAQ<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#</span>
+
+<span class="token punctuation">[</span>root@uias-pro-2-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cat .erlang.cookie </span>
+XDNIPVYESMANFEQOFFAQ<span class="token punctuation">[</span>root@uias-pro-2-rabbitmq ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># </span>
+</code></pre>
 <p>当然，这里也可以根据自己的情况，将文件内容复制粘贴到uias-pro-2-rabbitmq机器，但是要保证一致</p>
 <h3 id="Node节点加入集群"><a href="#Node节点加入集群" class="headerlink" title="Node节点加入集群"></a>Node节点加入集群</h3><p><strong>uias-pro-2-rabbitmq加入集群uias-pro-1-rabbitmq（在uias-pro-2-rabbitmq机器执行）</strong></p>
 <p>先查看uias-pro-2-rabbitmq的集群状态,很明显看到只有uias-pro-2-rabbitmq机器单机部署的信息</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-2-rabbitmq sbin]<span class="comment"># cd /usr/local/rabbitmq/sbin/</span></span><br><span class="line"></span><br><span class="line">[root@uias-pro-2-rabbitmq sbin]<span class="comment"># rabbitmqctl cluster_status</span></span><br><span class="line">Cluster status of node rabbit@uias-pro-2-rabbitmq ...</span><br><span class="line">Basics</span><br><span class="line"></span><br><span class="line">Cluster name: rabbit@uias-pro-2-rabbitmq</span><br><span class="line"></span><br><span class="line">Disk Nodes</span><br><span class="line"></span><br><span class="line">rabbit@uias-pro-2-rabbitmq</span><br><span class="line"></span><br><span class="line">Running Nodes</span><br><span class="line"></span><br><span class="line">rabbit@uias-pro-2-rabbitmq</span><br><span class="line"></span><br><span class="line">Versions</span><br><span class="line"></span><br><span class="line">rabbit@uias-pro-2-rabbitmq: RabbitMQ 3.8.2 on Erlang 22.0</span><br><span class="line"></span><br><span class="line">Alarms</span><br><span class="line"></span><br><span class="line">(none)</span><br><span class="line"></span><br><span class="line">Network Partitions</span><br><span class="line"></span><br><span class="line">(none)</span><br><span class="line"></span><br><span class="line">Listeners</span><br><span class="line"></span><br><span class="line">Node: rabbit@uias-pro-2-rabbitmq, interface: [::], port: 25672, protocol: clustering, purpose: inter-node and CLI tool communication</span><br><span class="line">Node: rabbit@uias-pro-2-rabbitmq, interface: [::], port: 5672, protocol: amqp, purpose: AMQP 0-9-1 and AMQP 1.0</span><br><span class="line">Node: rabbit@uias-pro-2-rabbitmq, interface: [::], port: 15672, protocol: http, purpose: HTTP API</span><br><span class="line"></span><br><span class="line">Feature flags</span><br><span class="line"></span><br><span class="line">Flag: drop_unroutable_metric, state: enabled</span><br><span class="line">Flag: empty_basic_get_metric, state: enabled</span><br><span class="line">Flag: implicit_default_bindings, state: enabled</span><br><span class="line">Flag: quorum_queue, state: enabled</span><br><span class="line">Flag: virtual_host_metadata, state: enabled</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-2-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cd /usr/local/rabbitmq/sbin/</span>
+
+<span class="token punctuation">[</span>root@uias-pro-2-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmqctl cluster_status</span>
+Cluster status of node rabbit@uias-pro-2-rabbitmq <span class="token punctuation">..</span>.
+Basics
+
+Cluster name: rabbit@uias-pro-2-rabbitmq
+
+Disk Nodes
+
+rabbit@uias-pro-2-rabbitmq
+
+Running Nodes
+
+rabbit@uias-pro-2-rabbitmq
+
+Versions
+
+rabbit@uias-pro-2-rabbitmq: RabbitMQ 3.8.2 on Erlang 22.0
+
+Alarms
+
+<span class="token punctuation">(</span>none<span class="token punctuation">)</span>
+
+Network Partitions
+
+<span class="token punctuation">(</span>none<span class="token punctuation">)</span>
+
+Listeners
+
+Node: rabbit@uias-pro-2-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 25672, protocol: clustering, purpose: inter-node and CLI tool communication
+Node: rabbit@uias-pro-2-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 5672, protocol: amqp, purpose: AMQP 0-9-1 and AMQP 1.0
+Node: rabbit@uias-pro-2-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 15672, protocol: http, purpose: HTTP API
+
+Feature flags
+
+Flag: drop_unroutable_metric, state: enabled
+Flag: empty_basic_get_metric, state: enabled
+Flag: implicit_default_bindings, state: enabled
+Flag: quorum_queue, state: enabled
+Flag: virtual_host_metadata, state: enabled
+</code></pre>
 <p>停止rabbitmq服务之后再进行node节点的加入</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-2-rabbitmq sbin]<span class="comment"># rabbitmqctl stop_app   #停止服务</span></span><br><span class="line">Stopping rabbit application on node rabbit@uias-pro-2-rabbitmq ...</span><br><span class="line"></span><br><span class="line">[root@uias-pro-2-rabbitmq sbin]<span class="comment"># rabbitmqctl reset    #重置元数据</span></span><br><span class="line">Resetting node rabbit@uias-pro-2-rabbitmq ...</span><br><span class="line"></span><br><span class="line"><span class="comment">##加--ram表示为内存节点，不加默认为磁盘节点 这里让uias-pro-1-rabbitmq为磁盘节点，</span></span><br><span class="line"><span class="comment">##uias-pro-2-rabbitmq为内存节点</span></span><br><span class="line">[root@uias-pro-2-rabbitmq sbin]<span class="comment"># ./rabbitmqctl join_cluster rabbit@uias-pro-1-rabbitmq --ram</span></span><br><span class="line">Clustering node rabbit@uias-pro-2-rabbitmq with rabbit@uias-pro-1-rabbitmq</span><br><span class="line"></span><br><span class="line">[root@uias-pro-2-rabbitmq sbin]<span class="comment"># rabbitmqctl start_app  #再一次启动</span></span><br><span class="line">Starting node rabbit@uias-pro-2-rabbitmq ...</span><br><span class="line"> completed with 3 plugins.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-2-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmqctl stop_app   #停止服务</span>
+Stopping rabbit application on node rabbit@uias-pro-2-rabbitmq <span class="token punctuation">..</span>.
+
+<span class="token punctuation">[</span>root@uias-pro-2-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmqctl reset    #重置元数据</span>
+Resetting node rabbit@uias-pro-2-rabbitmq <span class="token punctuation">..</span>.
+
+<span class="token comment" spellcheck="true">##加--ram表示为内存节点，不加默认为磁盘节点 这里让uias-pro-1-rabbitmq为磁盘节点，</span>
+<span class="token comment" spellcheck="true">##uias-pro-2-rabbitmq为内存节点</span>
+<span class="token punctuation">[</span>root@uias-pro-2-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ./rabbitmqctl join_cluster rabbit@uias-pro-1-rabbitmq --ram</span>
+Clustering node rabbit@uias-pro-2-rabbitmq with rabbit@uias-pro-1-rabbitmq
+
+<span class="token punctuation">[</span>root@uias-pro-2-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmqctl start_app  #再一次启动</span>
+Starting node rabbit@uias-pro-2-rabbitmq <span class="token punctuation">..</span>.
+ completed with 3 plugins.
+</code></pre>
 <p>再次查看集群是否成功。明显可以看到补充了uias-pro-1-rabbitmq服务器的信息</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-2-rabbitmq sbin]<span class="comment"># rabbitmqctl cluster_status</span></span><br><span class="line">Cluster status of node rabbit@uias-pro-2-rabbitmq ...</span><br><span class="line">Basics</span><br><span class="line"></span><br><span class="line">Cluster name: rabbit@uias-pro-1-rabbitmq</span><br><span class="line"></span><br><span class="line">Disk Nodes        <span class="comment">#磁盘节点</span></span><br><span class="line"></span><br><span class="line">rabbit@uias-pro-1-rabbitmq</span><br><span class="line"></span><br><span class="line">RAM Nodes         <span class="comment">#内存节点</span></span><br><span class="line"></span><br><span class="line">rabbit@uias-pro-2-rabbitmq</span><br><span class="line"></span><br><span class="line">Running Nodes         <span class="comment">#正在运行的节点</span></span><br><span class="line"></span><br><span class="line">rabbit@uias-pro-1-rabbitmq</span><br><span class="line">rabbit@uias-pro-2-rabbitmq</span><br><span class="line"></span><br><span class="line">Versions              <span class="comment">#版本信息</span></span><br><span class="line"> </span><br><span class="line">rabbit@uias-pro-1-rabbitmq: RabbitMQ 3.8.2 on Erlang 22.0</span><br><span class="line">rabbit@uias-pro-2-rabbitmq: RabbitMQ 3.8.2 on Erlang 22.0</span><br><span class="line"></span><br><span class="line">Alarms</span><br><span class="line"></span><br><span class="line">(none)</span><br><span class="line"></span><br><span class="line">Network Partitions</span><br><span class="line"></span><br><span class="line">(none)</span><br><span class="line"></span><br><span class="line">Listeners</span><br><span class="line"></span><br><span class="line">Node: rabbit@uias-pro-1-rabbitmq, interface: [::], port: 25672, protocol: clustering, purpose: inter-node and CLI tool communication</span><br><span class="line">Node: rabbit@uias-pro-1-rabbitmq, interface: [::], port: 5672, protocol: amqp, purpose: AMQP 0-9-1 and AMQP 1.0</span><br><span class="line">Node: rabbit@uias-pro-1-rabbitmq, interface: [::], port: 15672, protocol: http, purpose: HTTP API</span><br><span class="line">Node: rabbit@uias-pro-2-rabbitmq, interface: [::], port: 25672, protocol: clustering, purpose: inter-node and CLI tool communication</span><br><span class="line">Node: rabbit@uias-pro-2-rabbitmq, interface: [::], port: 5672, protocol: amqp, purpose: AMQP 0-9-1 and AMQP 1.0</span><br><span class="line">Node: rabbit@uias-pro-2-rabbitmq, interface: [::], port: 15672, protocol: http, purpose: HTTP API</span><br><span class="line"></span><br><span class="line">Feature flags</span><br><span class="line"></span><br><span class="line">Flag: drop_unroutable_metric, state: enabled</span><br><span class="line">Flag: empty_basic_get_metric, state: enabled</span><br><span class="line">Flag: implicit_default_bindings, state: enabled</span><br><span class="line">Flag: quorum_queue, state: enabled</span><br><span class="line">Flag: virtual_host_metadata, state: enabled</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-2-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmqctl cluster_status</span>
+Cluster status of node rabbit@uias-pro-2-rabbitmq <span class="token punctuation">..</span>.
+Basics
+
+Cluster name: rabbit@uias-pro-1-rabbitmq
+
+Disk Nodes        <span class="token comment" spellcheck="true">#磁盘节点</span>
+
+rabbit@uias-pro-1-rabbitmq
+
+RAM Nodes         <span class="token comment" spellcheck="true">#内存节点</span>
+
+rabbit@uias-pro-2-rabbitmq
+
+Running Nodes         <span class="token comment" spellcheck="true">#正在运行的节点</span>
+
+rabbit@uias-pro-1-rabbitmq
+rabbit@uias-pro-2-rabbitmq
+
+Versions              <span class="token comment" spellcheck="true">#版本信息</span>
+ 
+rabbit@uias-pro-1-rabbitmq: RabbitMQ 3.8.2 on Erlang 22.0
+rabbit@uias-pro-2-rabbitmq: RabbitMQ 3.8.2 on Erlang 22.0
+
+Alarms
+
+<span class="token punctuation">(</span>none<span class="token punctuation">)</span>
+
+Network Partitions
+
+<span class="token punctuation">(</span>none<span class="token punctuation">)</span>
+
+Listeners
+
+Node: rabbit@uias-pro-1-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 25672, protocol: clustering, purpose: inter-node and CLI tool communication
+Node: rabbit@uias-pro-1-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 5672, protocol: amqp, purpose: AMQP 0-9-1 and AMQP 1.0
+Node: rabbit@uias-pro-1-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 15672, protocol: http, purpose: HTTP API
+Node: rabbit@uias-pro-2-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 25672, protocol: clustering, purpose: inter-node and CLI tool communication
+Node: rabbit@uias-pro-2-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 5672, protocol: amqp, purpose: AMQP 0-9-1 and AMQP 1.0
+Node: rabbit@uias-pro-2-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 15672, protocol: http, purpose: HTTP API
+
+Feature flags
+
+Flag: drop_unroutable_metric, state: enabled
+Flag: empty_basic_get_metric, state: enabled
+Flag: implicit_default_bindings, state: enabled
+Flag: quorum_queue, state: enabled
+Flag: virtual_host_metadata, state: enabled
+</code></pre>
 <p><strong>验证</strong>：在第一台服务器uias-pro-1-rabbitmq中验证，查看其状态。是否也能看到uias-pro-2-rabbitmq服务器的信息</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># rabbitmqctl cluster_status</span></span><br><span class="line">Cluster status of node rabbit@uias-pro-1-rabbitmq ...</span><br><span class="line">Basics</span><br><span class="line"></span><br><span class="line">Cluster name: rabbit@uias-pro-1-rabbitmq</span><br><span class="line"></span><br><span class="line">Disk Nodes</span><br><span class="line"></span><br><span class="line">rabbit@uias-pro-1-rabbitmq</span><br><span class="line"></span><br><span class="line">RAM Nodes</span><br><span class="line"></span><br><span class="line">rabbit@uias-pro-2-rabbitmq</span><br><span class="line"></span><br><span class="line">Running Nodes</span><br><span class="line"></span><br><span class="line">rabbit@uias-pro-1-rabbitmq</span><br><span class="line">rabbit@uias-pro-2-rabbitmq</span><br><span class="line"></span><br><span class="line">Versions</span><br><span class="line"></span><br><span class="line">rabbit@uias-pro-1-rabbitmq: RabbitMQ 3.8.2 on Erlang 22.0</span><br><span class="line">rabbit@uias-pro-2-rabbitmq: RabbitMQ 3.8.2 on Erlang 22.0</span><br><span class="line"></span><br><span class="line">Alarms</span><br><span class="line"></span><br><span class="line">(none)</span><br><span class="line"></span><br><span class="line">Network Partitions</span><br><span class="line"></span><br><span class="line">(none)</span><br><span class="line"></span><br><span class="line">Listeners</span><br><span class="line"></span><br><span class="line">Node: rabbit@uias-pro-1-rabbitmq, interface: [::], port: 25672, protocol: clustering, purpose: inter-node and CLI tool communication</span><br><span class="line">Node: rabbit@uias-pro-1-rabbitmq, interface: [::], port: 5672, protocol: amqp, purpose: AMQP 0-9-1 and AMQP 1.0</span><br><span class="line">Node: rabbit@uias-pro-1-rabbitmq, interface: [::], port: 15672, protocol: http, purpose: HTTP API</span><br><span class="line">Node: rabbit@uias-pro-2-rabbitmq, interface: [::], port: 25672, protocol: clustering, purpose: inter-node and CLI tool communication</span><br><span class="line">Node: rabbit@uias-pro-2-rabbitmq, interface: [::], port: 5672, protocol: amqp, purpose: AMQP 0-9-1 and AMQP 1.0</span><br><span class="line">Node: rabbit@uias-pro-2-rabbitmq, interface: [::], port: 15672, protocol: http, purpose: HTTP API</span><br><span class="line"></span><br><span class="line">Feature flags</span><br><span class="line"></span><br><span class="line">Flag: drop_unroutable_metric, state: enabled</span><br><span class="line">Flag: empty_basic_get_metric, state: enabled</span><br><span class="line">Flag: implicit_default_bindings, state: enabled</span><br><span class="line">Flag: quorum_queue, state: enabled</span><br><span class="line">Flag: virtual_host_metadata, state: enabled</span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmqctl cluster_status</span>
+Cluster status of node rabbit@uias-pro-1-rabbitmq <span class="token punctuation">..</span>.
+Basics
+
+Cluster name: rabbit@uias-pro-1-rabbitmq
+
+Disk Nodes
+
+rabbit@uias-pro-1-rabbitmq
+
+RAM Nodes
+
+rabbit@uias-pro-2-rabbitmq
+
+Running Nodes
+
+rabbit@uias-pro-1-rabbitmq
+rabbit@uias-pro-2-rabbitmq
+
+Versions
+
+rabbit@uias-pro-1-rabbitmq: RabbitMQ 3.8.2 on Erlang 22.0
+rabbit@uias-pro-2-rabbitmq: RabbitMQ 3.8.2 on Erlang 22.0
+
+Alarms
+
+<span class="token punctuation">(</span>none<span class="token punctuation">)</span>
+
+Network Partitions
+
+<span class="token punctuation">(</span>none<span class="token punctuation">)</span>
+
+Listeners
+
+Node: rabbit@uias-pro-1-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 25672, protocol: clustering, purpose: inter-node and CLI tool communication
+Node: rabbit@uias-pro-1-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 5672, protocol: amqp, purpose: AMQP 0-9-1 and AMQP 1.0
+Node: rabbit@uias-pro-1-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 15672, protocol: http, purpose: HTTP API
+Node: rabbit@uias-pro-2-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 25672, protocol: clustering, purpose: inter-node and CLI tool communication
+Node: rabbit@uias-pro-2-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 5672, protocol: amqp, purpose: AMQP 0-9-1 and AMQP 1.0
+Node: rabbit@uias-pro-2-rabbitmq, interface: <span class="token punctuation">[</span>::<span class="token punctuation">]</span>, port: 15672, protocol: http, purpose: HTTP API
+
+Feature flags
+
+Flag: drop_unroutable_metric, state: enabled
+Flag: empty_basic_get_metric, state: enabled
+Flag: implicit_default_bindings, state: enabled
+Flag: quorum_queue, state: enabled
+Flag: virtual_host_metadata, state: enabled
+</code></pre>
 <h3 id="新建用户、用户授权、虚拟主机等配置"><a href="#新建用户、用户授权、虚拟主机等配置" class="headerlink" title="新建用户、用户授权、虚拟主机等配置"></a>新建用户、用户授权、虚拟主机等配置</h3><p>在服务器uias-pro-1-rabbitmq中执行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># rabbitmqctl add_user admin xxxxxx  #添加一个admin账户 口令为xxxxxx</span></span><br><span class="line">Adding user <span class="string">&quot;admin&quot;</span> ...</span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># rabbitmqctl add_vhost /admin       #添加一个虚拟主机</span></span><br><span class="line">Adding vhost <span class="string">&quot;/admin&quot;</span> ...</span><br><span class="line"></span><br><span class="line"><span class="comment">#对admin用户授权 分别表示配置正则 读 写</span></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># rabbitmqctl set_permissions -p /admin admin &quot;.*&quot; &quot;.*&quot; &quot;.*&quot;  </span></span><br><span class="line">Setting permissions <span class="keyword">for</span> user <span class="string">&quot;admin&quot;</span> <span class="keyword">in</span> vhost <span class="string">&quot;/admin&quot;</span> ...</span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># rabbitmqctl set_user_tags admin administrator   #添加一个标签</span></span><br><span class="line">Setting tags <span class="keyword">for</span> user <span class="string">&quot;admin&quot;</span> to [administrator] ...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmqctl add_user admin xxxxxx  #添加一个admin账户 口令为xxxxxx</span>
+Adding user <span class="token string">"admin"</span> <span class="token punctuation">..</span>.
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmqctl add_vhost /admin       #添加一个虚拟主机</span>
+Adding vhost <span class="token string">"/admin"</span> <span class="token punctuation">..</span>.
+
+<span class="token comment" spellcheck="true">#对admin用户授权 分别表示配置正则 读 写</span>
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmqctl set_permissions -p /admin admin ".*" ".*" ".*"  </span>
+Setting permissions <span class="token keyword">for</span> user <span class="token string">"admin"</span> <span class="token keyword">in</span> vhost <span class="token string">"/admin"</span> <span class="token punctuation">..</span>.
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmqctl set_user_tags admin administrator   #添加一个标签</span>
+Setting tags <span class="token keyword">for</span> user <span class="token string">"admin"</span> to <span class="token punctuation">[</span>administrator<span class="token punctuation">]</span> <span class="token punctuation">..</span>.
+</code></pre>
 <p>刷新访问，查看到uias-pro-1-rabbitmq有了对应的admin账户，验证uias-pro-2-rabbitmq主机中是否同步。<br><img src="https://img-blog.csdnimg.cn/20200628143717813.png" alt="在这里插入图片描述"><br>查看是否同步<br><img src="https://img-blog.csdnimg.cn/20200628143749914.png" alt="在这里插入图片描述"><br>明显已经同步，表示这2台机器的集群部署成功，但是默认是普通模式</p>
 <h3 id="部署镜像模式"><a href="#部署镜像模式" class="headerlink" title="部署镜像模式"></a>部署镜像模式</h3><p><strong>部署镜像模式（在uias-pro-1-rabbitmq机器执行），只有设置policy策略才能算得上是镜像模式，前面的配置配置的是普通模式</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># rabbitmqctl set_policy ha-all &quot;^&quot; &#x27;&#123;&quot;ha-mode&quot;:&quot;all&quot;&#125;&#x27;   # 表示同步所有的队列消息</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@uias-pro-1-rabbitmq sbin]<span class="comment"># rabbitmqctl set_policy -p /admin ha-allqueue &quot;^rqmessage&quot; &#x27;&#123;&quot;ha-mode&quot;:&quot;all&quot;&#125;&#x27;  </span></span><br><span class="line"><span class="comment">##表示同步以rqmessage开头的消息</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmqctl set_policy ha-all "^" '&amp;#123;"ha-mode":"all"&amp;#125;'   # 表示同步所有的队列消息</span>
 
+
+<span class="token punctuation">[</span>root@uias-pro-1-rabbitmq sbin<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># rabbitmqctl set_policy -p /admin ha-allqueue "^rqmessage" '&amp;#123;"ha-mode":"all"&amp;#125;'  </span>
+<span class="token comment" spellcheck="true">##表示同步以rqmessage开头的消息</span>
+</code></pre>
 <p>语法解析：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">在cluster中任意节点启用策略，策略会自动同步到集群节点</span><br><span class="line"></span><br><span class="line">set_policy [-p vhostpath] &#123;name&#125; &#123;pattern&#125; &#123;definition&#125; [priority]   <span class="comment">#语法</span></span><br><span class="line"></span><br><span class="line">举例如下</span><br><span class="line"><span class="comment"># rabbitmqctl set_policy -p /admin ha-allqueue&quot;^&quot; &#x27;&#123;&quot;ha-mode&quot;:&quot;all&quot;&#125;&#x27;</span></span><br><span class="line">这行命令在vhost名称为admin创建了一个策略，策略名称为ha-allqueue,策略模式为 all 即复制到所有节点，包含新增节点，策略正则表达式为 “^” 表示所有匹配所有队列名称。</span><br><span class="line"></span><br><span class="line">例如 </span><br><span class="line"><span class="comment"># rabbitmqctl set_policy -p /test ha-allqueue &quot;^message&quot; &#x27;&#123;&quot;ha-mode&quot;:&quot;all&quot;&#125;&#x27;</span></span><br><span class="line">注意：<span class="string">&quot;^message&quot;</span> 这个规则要根据自己修改，这个是指同步<span class="string">&quot;message&quot;</span>开头的队列名称，我们配置时使用的应用于所有队列，所以表达式为<span class="string">&quot;^&quot;</span></span><br><span class="line"></span><br><span class="line">官网参考：</span><br><span class="line">(https://www.rabbitmq.com/rabbitmqctl.8.html)</span><br></pre></td></tr></table></figure>
+<pre class=" language-bash"><code class="language-bash">在cluster中任意节点启用策略，策略会自动同步到集群节点
+
+set_policy <span class="token punctuation">[</span>-p vhostpath<span class="token punctuation">]</span> <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;name&amp;#125; &amp;#123;pattern&amp;#125; &amp;#123;definition&amp;#125; [priority]   #语法</span>
+
+举例如下
+<span class="token comment" spellcheck="true"># rabbitmqctl set_policy -p /admin ha-allqueue"^" '&amp;#123;"ha-mode":"all"&amp;#125;'</span>
+这行命令在vhost名称为admin创建了一个策略，策略名称为ha-allqueue,策略模式为 all 即复制到所有节点，包含新增节点，策略正则表达式为 “^” 表示所有匹配所有队列名称。
+
+例如 
+<span class="token comment" spellcheck="true"># rabbitmqctl set_policy -p /test ha-allqueue "^message" '&amp;#123;"ha-mode":"all"&amp;#125;'</span>
+注意：<span class="token string">"^message"</span> 这个规则要根据自己修改，这个是指同步<span class="token string">"message"</span>开头的队列名称，我们配置时使用的应用于所有队列，所以表达式为<span class="token string">"^"</span>
+
+官网参考：
+<span class="token punctuation">(</span>https://www.rabbitmq.com/rabbitmqctl.8.html<span class="token punctuation">)</span>
+</code></pre>
 <h3 id="url访问"><a href="#url访问" class="headerlink" title="url访问"></a>url访问</h3><p><a target="_blank" rel="noopener" href="http://10.252.71.82:15672/">http://10.252.71.82:15672/</a><br><img src="https://img-blog.csdnimg.cn/20200628173523764.png" alt="在这里插入图片描述"></p>
 <p><img src="https://img-blog.csdnimg.cn/20200628173942841.png" alt="在这里插入图片描述"><br>web管理端查看镜像策略是否成功<br><img src="https://img-blog.csdnimg.cn/20200628174937120.png" alt="在这里插入图片描述"></p>
 
@@ -392,6 +744,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/kai25@michaels.com" title="E-Mail → kai25@michaels.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
 
 
 
