@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"likai.tech","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Kubeadm Deploys K8S-1.20 Version Step Experiment ….">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubeadm deploys K8S-1.20 and above">
+<meta property="og:url" content="http://likai.tech/2021/11/18/Kubeadm-k8s-1-20-depoly/index.html">
+<meta property="og:site_name" content="Kaivi&#39;Blogs">
+<meta property="og:description" content="Kubeadm Deploys K8S-1.20 Version Step Experiment ….">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2021070510153712.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210705110559576.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210705111205898.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210705111717327.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210706110823104.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210706111212439.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210706135037981.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210706111707932.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2021070611172949.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210706112108913.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210706112211773.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210706112824761.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210706133155787.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210706133730658.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210706133819276.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2021070613401972.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210706134202843.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210706134358729.png">
+<meta property="article:published_time" content="2021-11-18T06:03:11.440Z">
+<meta property="article:modified_time" content="2021-11-18T06:06:00.211Z">
+<meta property="article:author" content="Kaivi">
+<meta property="article:tag" content="Linux life">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/2021070510153712.png">
+
+<link rel="canonical" href="http://likai.tech/2021/11/18/Kubeadm-k8s-1-20-depoly/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Kubeadm deploys K8S-1.20 and above | Kaivi'Blogs</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Kaivi'Blogs</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Be yourself, Be better</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://likai.tech/2021/11/18/Kubeadm-k8s-1-20-depoly/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Kaivi">
+      <meta itemprop="description" content="Cease to struggle and you cease to live.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kaivi'Blogs">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kubeadm deploys K8S-1.20 and above
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-11-18 14:03:11 / Modified: 14:06:00" itemprop="dateCreated datePublished" datetime="2021-11-18T14:03:11+08:00">2021-11-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Kubeadm Deploys K8S-1.20 Version Step Experiment ….</p>
+<span id="more"></span>
+
+
+<p>注意：本文通过Docker+kubernetes(k8s)+DevOps企业级架构师实战培训课程实验所得，感谢先超老师！</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><h3 id="k8s环境规划"><a href="#k8s环境规划" class="headerlink" title="k8s环境规划"></a>k8s环境规划</h3><table>
+<thead>
+<tr>
+<th>服务</th>
+<th>IP/Mask</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Service网段</td>
+<td>10.10.0.0/16</td>
+</tr>
+<tr>
+<td>Pod网段</td>
+<td>10.244.0.0/16</td>
+</tr>
+<tr>
+<td>操作系统</td>
+<td>centos7.6</td>
+</tr>
+<tr>
+<td>配置</td>
+<td>4Gib内存/6vCPU/100G硬盘</td>
+</tr>
+<tr>
+<td>网络</td>
+<td>NAT</td>
+</tr>
+<tr>
+<td>虚拟化服务</td>
+<td>开启虚拟机的虚拟化</td>
+</tr>
+<tr>
+<td><img src="https://img-blog.csdnimg.cn/2021070510153712.png" alt="在这里插入图片描述"></td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>K8S集群角色</th>
+<th>IP</th>
+<th>主机名</th>
+<th>安装的组件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>控制节点</td>
+<td>192.168.40.180</td>
+<td>kaivimaster1</td>
+<td>apiserver、controller-manager、scheduler、etcd、docker、keepalived、nginx 、kube-proxy、calico、kubelet</td>
+</tr>
+<tr>
+<td>控制节点</td>
+<td>192.168.40.181</td>
+<td>kaivimaster2</td>
+<td>apiserver、controller-manager、scheduler、etcd、docker、keepalived、nginx、kube-proxy、calico、kubelet</td>
+</tr>
+<tr>
+<td>工作节点</td>
+<td>192.168.40.182</td>
+<td>kaivinode1</td>
+<td>kubelet、kube-proxy、docker、calico、coredns</td>
+</tr>
+<tr>
+<td>Vip</td>
+<td>192.168.40.199</td>
+<td>kaivimaster1/kaivimaster2</td>
+<td>keepalived、nginx</td>
+</tr>
+</tbody></table>
+<p><strong>kubeadm和二进制安装k8s适用场景分析</strong><br>kubeadm是官方提供的开源工具，是一个开源项目，用于快速搭建kubernetes集群，目前是比较方便和推荐使用的。kubeadm init 以及 kubeadm join 这两个命令可以快速创建 kubernetes 集群。Kubeadm初始化k8s，所有的组件都是以pod形式运行的，具备故障自恢复能力。</p>
+<p>kubeadm是工具，可以快速搭建集群，也就是相当于用程序脚本帮我们装好了集群，属于自动部署，简化部署操作，自动部署屏蔽了很多细节，使得对各个模块感知很少，如果对k8s架构组件理解不深的话，遇到问题比较难排查。</p>
+<p>kubeadm适合需要经常部署k8s，或者对自动化要求比较高的场景下使用。</p>
+<p>二进制：在官网下载相关组件的二进制包，如果手动安装，对kubernetes理解也会更全面。 </p>
+<p>Kubeadm和二进制都适合生产环境，在生产环境运行都很稳定，具体如何选择，可以根据实际项目进行评估。</p>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><h3 id="配置静态IP"><a href="#配置静态IP" class="headerlink" title="配置静态IP"></a>配置静态IP</h3><p>把虚拟机或者物理机配置成静态ip地址，这样机器重新启动后ip地址也不会发生改变。<br>以kaivimaster1主机修改静态IP为例:</p>
+<p>#修改/etc/sysconfig/network-scripts/ifcfg-ens33（具体看网络网卡，有的是eth0）文件，变成如下：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># vim /etc/sysconfig/network-scripts/ifcfg-ens33</span>
+TYPE<span class="token operator">=</span>Ethernet
+PROXY_METHOD<span class="token operator">=</span>none
+BROWSER_ONLY<span class="token operator">=</span>no
+BOOTPROTO<span class="token operator">=</span>static
+IPADDR<span class="token operator">=</span>192.168.40.180
+NETMASK<span class="token operator">=</span>255.255.255.0
+GATEWAY<span class="token operator">=</span>192.168.40.2
+DNS1<span class="token operator">=</span>192.168.40.2
+DEFROUTE<span class="token operator">=</span>yes
+IPV4_FAILURE_FATAL<span class="token operator">=</span>no
+IPV6INIT<span class="token operator">=</span>yes
+IPV6_AUTOCONF<span class="token operator">=</span>yes
+IPV6_DEFROUTE<span class="token operator">=</span>yes
+IPV6_FAILURE_FATAL<span class="token operator">=</span>no
+IPV6_ADDR_GEN_MODE<span class="token operator">=</span>stable-privacy
+NAME<span class="token operator">=</span>ens33
+DEVICE<span class="token operator">=</span>ens33
+ONBOOT<span class="token operator">=</span>yes
+</code></pre>
+<p>#修改配置文件之后需要重启网络服务才能使配置生效，重启网络服务命令如下：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">service</span> network restart
+</code></pre>
+<blockquote>
+<p>注：/etc/sysconfig/network-scripts/ifcfg-ens33文件里的配置说明： NAME=ens33<br>#网卡名字，跟DEVICE名字保持一致即可 DEVICE=ens33<br>#网卡设备名，大家ip addr可看到自己的这个网卡设备名，每个人的机器可能这个名字不一样，需要写自己的 BOOTPROTO=static<br>#static表示静态ip地址 ONBOOT=yes<br>#开机自启动网络，必须是yes IPADDR=192.168.40.180<br>#ip地址，需要跟自己电脑所在网段一致 NETMASK=255.255.255.0<br>#子网掩码，需要跟自己电脑所在网段一致 GATEWAY=192.168.40.2<br>#网关，在自己电脑打开cmd，输入ipconfig /all可看到 DNS1=192.168.40.2<br>#DNS，在自己电脑打开cmd，输入ipconfig /all可看到</p>
+</blockquote>
+<h3 id="配置主机名"><a href="#配置主机名" class="headerlink" title="配置主机名"></a>配置主机名</h3><p>#配置主机名：</p>
+<pre class=" language-bash"><code class="language-bash">在192.168.40.180上执行如下：
+hostnamectl set-hostname kaivimaster1
+
+在192.168.40.181上执行如下：
+hostnamectl set-hostname kaivimaster2
+
+在192.168.40.182上执行如下：
+hostnamectl set-hostname kaivimaster3
+
+在192.168.40.183上执行如下：
+hostnamectl set-hostname kaivinode1
+</code></pre>
+<h3 id="配置hosts文件"><a href="#配置hosts文件" class="headerlink" title="配置hosts文件"></a>配置hosts文件</h3><p>#修改kaivimaster1、kaivimaster2、kaivimaster3、kaivinode1机器的/etc/hosts文件，增加如下四行：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># vim /etc/hosts</span>
+192.168.40.180   kaivimaster1
+192.168.40.181   kaivimaster2
+192.168.40.182   kaivimaster3
+192.168.40.183   kaivinode1
+</code></pre>
+<h3 id="主机节点免密"><a href="#主机节点免密" class="headerlink" title="主机节点免密"></a>主机节点免密</h3><p>配置主机之间无密码登录，每台机器都按照如下操作</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#生成ssh 密钥对</span>
+ssh-keygen -t rsa    <span class="token comment" spellcheck="true">#一路回车，不输入密码</span>
+
+把本地的ssh公钥文件安装到远程主机对应的账户
+ssh-copy-id -i .ssh/id_rsa.pub kaivimaster1
+ssh-copy-id -i .ssh/id_rsa.pub kaivimaster2
+ssh-copy-id -i .ssh/id_rsa.pub kaivimaster3
+ssh-copy-id -i .ssh/id_rsa.pub kaivinode1
+</code></pre>
+<h3 id="关闭firewalld防火墙"><a href="#关闭firewalld防火墙" class="headerlink" title="关闭firewalld防火墙"></a>关闭firewalld防火墙</h3><p>关闭firewalld防火墙，在kaivimaster1、kaivimaster2、kaivimaster3、kaivinode1上操作：</p>
+<pre class=" language-bash"><code class="language-bash">systemctl stop firewalld 
+systemctl disable firewalld
+systemctl status firewalld
+</code></pre>
+<h3 id="关闭selinux"><a href="#关闭selinux" class="headerlink" title="关闭selinux"></a>关闭selinux</h3><p>关闭selinux，在kaivimaster1、kaivimaster2、kaivimaster3、kaivinode1上操作：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">sed</span> -i <span class="token string">'s/SELINUX=enforcing/SELINUX=disabled/g'</span> /etc/selinux/config
+<span class="token comment" spellcheck="true">#修改selinux配置文件之后，重启机器，selinux配置才能永久生效</span>
+重启之后登录机器验证是否修改成功：
+getenforce
+<span class="token comment" spellcheck="true">#显示Disabled说明selinux已经关闭</span>
+</code></pre>
+<h3 id="关闭交换分区swap"><a href="#关闭交换分区swap" class="headerlink" title="关闭交换分区swap"></a>关闭交换分区swap</h3><p>关闭交换分区swap，在kaivimaster1、kaivimaster2、kaivimaster3、kaivinode1上操作：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#临时关闭</span>
+swapoff -a
+</code></pre>
+<p>#永久关闭：注释swap挂载，给swap这行开头加一下注释</p>
+<pre class=" language-bash"><code class="language-bash">vim /etc/fstab
+<span class="token comment" spellcheck="true">#/dev/mapper/centos-swap swap      swap    defaults        0 0</span>
+
+<span class="token comment" spellcheck="true">#如果是克隆的虚拟机，需要删除UUID   很重要</span>
+重启服务器
+</code></pre>
+<h3 id="修改内核参数"><a href="#修改内核参数" class="headerlink" title="修改内核参数"></a>修改内核参数</h3><p>修改内核参数，在kaivimaster1、kaivimaster2、kaivimaster3、kaivinode1上操作：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#加载br_netfilter模块</span>
+modprobe br_netfilter
+
+<span class="token comment" spellcheck="true">#验证模块是否加载成功：</span>
+lsmod <span class="token operator">|</span><span class="token function">grep</span> br_netfilter
+
+<span class="token comment" spellcheck="true">#修改内核参数</span>
+<span class="token function">cat</span> <span class="token operator">></span> /etc/sysctl.d/k8s.conf <span class="token operator">&lt;&lt;</span><span class="token string">EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF</span>
+
+<span class="token comment" spellcheck="true">#使刚才修改的内核参数生效</span>
+sysctl -p /etc/sysctl.d/k8s.conf  
+</code></pre>
+<blockquote>
+<p>问题1：sysctl是做什么的？ 在运行时配置内核参数   -p<br>从指定的文件加载系统参数，如不指定即从/etc/sysctl.conf中加载</p>
+<p>问题2：为什么要执行modprobe br_netfilter？ 修改/etc/sysctl.d/k8s.conf文件，增加如下三行参数：<br>net.bridge.bridge-nf-call-ip6tables = 1<br>net.bridge.bridge-nf-call-iptables = 1 net.ipv4.ip_forward = 1</p>
+<p>sysctl -p /etc/sysctl.d/k8s.conf出现报错：</p>
+<p>sysctl: cannot stat /proc/sys/net/bridge/bridge-nf-call-ip6tables: No such file or directory sysctl: cannot stat<br>/proc/sys/net/bridge/bridge-nf-call-iptables: No such file or directory</p>
+<p>解决方法： modprobe br_netfilter</p>
+<p>问题3：为什么开启net.bridge.bridge-nf-call-iptables内核参数？<br>在centos下安装docker，执行docker info出现如下警告： WARNING: bridge-nf-call-iptables is disabled WARNING: bridge-nf-call-ip6tables is disabled</p>
+<p>解决办法： vim  /etc/sysctl.d/k8s.conf net.bridge.bridge-nf-call-ip6tables = 1 net.bridge.bridge-nf-call-iptables = 1</p>
+</blockquote>
+<p>问题4：为什么要开启net.ipv4.ip_forward = 1参数？<br>kubeadm初始化k8s如果报错：<br> <img src="https://img-blog.csdnimg.cn/20210705110559576.png" alt="在这里插入图片描述"><br>就表示没有开启ip_forward，需要开启。</p>
+<p>net.ipv4.ip_forward是数据包转发：<br>出于安全考虑，Linux系统默认是禁止数据包转发的。所谓转发即当主机拥有多于一块的网卡时，其中一块收到数据包，根据数据包的目的ip地址将数据包发往本机另一块网卡，该网卡根据路由表继续发送数据包。这通常是路由器所要实现的功能。<br>要让Linux系统具有路由转发功能，需要配置一个Linux的内核参数net.ipv4.ip_forward。这个参数指定了Linux系统当前对路由转发功能的支持情况；其值为0时表示禁止进行IP转发；如果是1,则说明IP转发功能已经打开。</p>
+<h3 id="配置阿里云repo源"><a href="#配置阿里云repo源" class="headerlink" title="配置阿里云repo源"></a>配置阿里云repo源</h3><p>配置阿里云repo源，在kaivimaster1、kaivimaster2、kaivimaster3、kaivinode1上操作：<br>这里以 kaivimaster1服务器为例</p>
+<pre class=" language-bash"><code class="language-bash">在kaivimaster1上操作：
+安装rzsz命令
+<span class="token punctuation">[</span>root@kaivimaster1<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum install lrzsz -y</span>
+安装scp：
+<span class="token punctuation">[</span>root@kaivimaster1<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#yum install openssh-clients</span>
+
+<span class="token comment" spellcheck="true">#备份基础repo源</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># mkdir /root/repo.bak</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cd /etc/yum.repos.d/</span>
+<span class="token punctuation">[</span>root@kaivimaster1<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># mv * /root/repo.bak/</span>
+</code></pre>
+<p>#下载阿里云的repo源<br>把CentOS-Base.repo文件上传到kaivimaster1主机的/etc/yum.repos.d/目录下<br><img src="https://img-blog.csdnimg.cn/20210705111205898.png" alt="在这里插入图片描述"></p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#配置国内阿里云docker的repo源</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span>
+</code></pre>
+<h3 id="配置时间同步"><a href="#配置时间同步" class="headerlink" title="配置时间同步"></a>配置时间同步</h3><p> 配置时间同步，在kaivimaster1、kaivimaster2、kaivimaster3、kaivinode1上操作：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#安装ntpdate命令，</span>
+<span class="token comment" spellcheck="true">#yum install ntpdate -y</span>
+
+<span class="token comment" spellcheck="true">#跟网络源做同步</span>
+ntpdate cn.pool.ntp.org
+
+<span class="token comment" spellcheck="true">#把时间同步做成计划任务</span>
+<span class="token function">crontab</span> -e
+* */1 * * * /usr/sbin/ntpdate   cn.pool.ntp.org
+<span class="token comment" spellcheck="true">#查看计划任务</span>
+<span class="token function">crontab</span> -l  
+<span class="token comment" spellcheck="true">#重启crond服务</span>
+<span class="token function">service</span> crond restart
+</code></pre>
+<h3 id="安装iptables"><a href="#安装iptables" class="headerlink" title="安装iptables"></a>安装iptables</h3><p>如果用firewalld不习惯，可以安装iptables ，在kaivimaster1、kaivimaster2、kaivimaster3、kaivinode1上操作：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#安装iptables</span>
+yum <span class="token function">install</span> iptables-services -y
+
+<span class="token comment" spellcheck="true">#禁用iptables</span>
+<span class="token function">service</span> iptables stop   <span class="token operator">&amp;&amp;</span> systemctl disable iptables
+
+<span class="token comment" spellcheck="true">#清空防火墙规则</span>
+iptables -F
+</code></pre>
+<h3 id="开启ipvs"><a href="#开启ipvs" class="headerlink" title="开启ipvs"></a>开启ipvs</h3><p>#不开启ipvs将会使用iptables进行数据包转发，但是效率低，所以官网推荐需要开通ipvs。<br>#把ipvs.modules上传到kaivimaster1机器的/etc/sysconfig/modules/目录下<br><img src="https://img-blog.csdnimg.cn/20210705111717327.png" alt="在这里插入图片描述"></p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1<span class="token comment" spellcheck="true"># chmod 755 /etc/sysconfig/modules/ipvs.modules &amp;&amp; bash /etc/sysconfig/modules/ipvs.modules &amp;&amp; lsmod | grep ip_vs</span>
+ip_vs_ftp              13079  0 
+nf_nat                 26583  1 ip_vs_ftp
+ip_vs_sed              12519  0 
+ip_vs_nq               12516  0 
+ip_vs_sh               12688  0 
+ip_vs_dh               12688  0 
+······
+</code></pre>
+<p>拷贝到其他服务器节点：kaivimaster2、kaivimaster3、kaivinode1<br>这里以拷贝到kaivinode1为例</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># scp /etc/sysconfig/modules/ipvs.modules kaivinode1:/etc/sysconfig/modules/</span>
+<span class="token punctuation">[</span>root@kaivinode1<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># chmod 755 /etc/sysconfig/modules/ipvs.modules &amp;&amp; bash /etc/sysconfig/modules/ipvs.modules &amp;&amp; lsmod | grep ip_vs</span>
+ip_vs_ftp              13079  0 
+nf_nat                 26583  1 ip_vs_ftp
+ip_vs_sed              12519  0 
+ip_vs_nq               12516  0 
+ip_vs_sh               12688  0 
+ip_vs_dh               12688  0
+</code></pre>
+<h3 id="安装基础软件包"><a href="#安装基础软件包" class="headerlink" title="安装基础软件包"></a>安装基础软件包</h3><p>安装基础软件包，在kaivimaster1、kaivimaster2、kaivimaster3、kaivinode1上操作：</p>
+<pre class=" language-bash"><code class="language-bash">yum <span class="token function">install</span> -y yum-utils device-mapper-persistent-data lvm2 <span class="token function">wget</span> net-tools nfs-utils lrzsz gcc gcc-c++ <span class="token function">make</span> cmake libxml2-devel openssl-devel curl curl-devel unzip <span class="token function">sudo</span> ntp libaio-devel <span class="token function">wget</span> vim ncurses-devel autoconf automake zlib-devel  python-devel epel-release openssh-server socat  ipvsadm conntrack ntpdate telnet <span class="token function">rsync</span>
+</code></pre>
+<h2 id="安装docker服务"><a href="#安装docker服务" class="headerlink" title="安装docker服务"></a>安装docker服务</h2><h3 id="安装docker-ce"><a href="#安装docker-ce" class="headerlink" title="安装docker-ce"></a>安装docker-ce</h3><pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum install docker-ce-20.10.6 docker-ce-cli-20.10.6 containerd.io  -y</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl start docker &amp;&amp; systemctl enable docker &amp;&amp; systemctl status docker</span>
+
+<span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum install docker-ce-20.10.6 docker-ce-cli-20.10.6 containerd.io  -y</span>
+<span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl start docker &amp;&amp; systemctl enable docker &amp;&amp; systemctl status docker</span>
+
+<span class="token punctuation">[</span>root@kaivinode1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum install docker-ce-20.10.6 docker-ce-cli-20.10.6 containerd.io  -y</span>
+<span class="token punctuation">[</span>root@kaivinode1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl start docker &amp;&amp; systemctl enable docker &amp;&amp; systemctl status docker</span>
+</code></pre>
+<h3 id="配置docker镜像加速器和驱动"><a href="#配置docker镜像加速器和驱动" class="headerlink" title="配置docker镜像加速器和驱动"></a>配置docker镜像加速器和驱动</h3><pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#vim  /etc/docker/daemon.json </span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+ <span class="token string">"registry-mirrors"</span>:<span class="token punctuation">[</span><span class="token string">"https://rsbud4vc.mirror.aliyuncs.com"</span>,<span class="token string">"https://registry.docker-cn.com"</span>,<span class="token string">"https://docker.mirrors.ustc.edu.cn"</span>,<span class="token string">"https://dockerhub.azk8s.cn"</span>,<span class="token string">"http://hub-mirror.c.163.com"</span>,<span class="token string">"http://qtid6917.mirror.aliyuncs.com"</span>, <span class="token string">"https://rncxm540.mirror.aliyuncs.com"</span><span class="token punctuation">]</span>,
+  <span class="token string">"exec-opts"</span><span class="token keyword">:</span> <span class="token punctuation">[</span><span class="token string">"native.cgroupdriver=systemd"</span><span class="token punctuation">]</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125; </span>
+
+
+<span class="token comment" spellcheck="true">#修改docker文件驱动为systemd，默认为cgroupfs，kubelet默认使用systemd，两者必须一致才可以。</span>
+</code></pre>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl daemon-reload  &amp;&amp; systemctl restart docker</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl status docker</span>
+</code></pre>
+<p>在kaivimaster2、kaivinode1中进行一样的操作</p>
+<h2 id="安装初始化k8s需要的软件包"><a href="#安装初始化k8s需要的软件包" class="headerlink" title="安装初始化k8s需要的软件包"></a>安装初始化k8s需要的软件包</h2><pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum install -y kubelet-1.20.6 kubeadm-1.20.6 kubectl-1.20.6</span>
+
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl enable kubelet &amp;&amp; systemctl start kubelet</span>
+
+<span class="token punctuation">[</span>root@kaivimaster1<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl status kubelet</span>
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/20210706110823104.png" alt="在这里插入图片描述"></p>
+<p>#上面可以看到kubelet状态不是running状态，这个是正常的，不用管，等k8s组件起来这个kubelet就正常了。</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum install -y kubelet-1.20.6 kubeadm-1.20.6 kubectl-1.20.6</span>
+<span class="token punctuation">[</span>root@kaivimaster2~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl enable kubelet &amp;&amp; systemctl start kubelet</span>
+<span class="token punctuation">[</span>root@kaivimaster2<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl status kubelet</span>
+
+<span class="token punctuation">[</span>root@kaivinode1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum install -y kubelet-1.20.6 kubeadm-1.20.6 kubectl-1.20.6</span>
+<span class="token punctuation">[</span>root@kaivinode1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl enable kubelet &amp;&amp; systemctl start kubelet</span>
+<span class="token punctuation">[</span>root@kaivinode1<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl status kubelet</span>
+</code></pre>
+<p>注：每个软件包的作用<br>Kubeadm:  kubeadm是一个工具，用来初始化k8s集群的<br>kubelet:   安装在集群所有节点上，用于启动Pod的<br>kubectl:   通过kubectl可以部署和管理应用，查看各种资源，创建、删除和更新各种组件</p>
+<h2 id="通过keepalive-nginx实现k8s-apiserver节点高可用"><a href="#通过keepalive-nginx实现k8s-apiserver节点高可用" class="headerlink" title="通过keepalive+nginx实现k8s apiserver节点高可用"></a>通过keepalive+nginx实现k8s apiserver节点高可用</h2><h3 id="配置epel源"><a href="#配置epel源" class="headerlink" title="配置epel源"></a>配置epel源</h3><p>把epel.repo上传到kaivimaster1的/etc/yum.repos.d目录下，这样才能安装keepalived和nginx<br><img src="https://img-blog.csdnimg.cn/20210706111212439.png" alt="在这里插入图片描述"></p>
+<p>#把epel.repo拷贝到远程主机kaivimaster2和kaivinode1上</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># scp /etc/yum.repos.d/epel.repo kaivimaster2:/etc/yum.repos.d/</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># scp /etc/yum.repos.d/epel.repo kaivinode1:/etc/yum.repos.d/</span>
+</code></pre>
+<h3 id="安装nginx主备"><a href="#安装nginx主备" class="headerlink" title="安装nginx主备"></a>安装nginx主备</h3><p>在kaivimaster1和kaivimaster2上做nginx主备安装</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#  yum install nginx keepalived -y</span>
+<span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#  yum install nginx keepalived -y</span>
+</code></pre>
+<h3 id="修改nginx配置文件。主备一样"><a href="#修改nginx配置文件。主备一样" class="headerlink" title="修改nginx配置文件。主备一样"></a>修改nginx配置文件。主备一样</h3><pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># vim /etc/nginx/nginx.conf</span>
+user nginx<span class="token punctuation">;</span>
+worker_processes auto<span class="token punctuation">;</span>
+error_log /var/log/nginx/error.log<span class="token punctuation">;</span>
+pid /run/nginx.pid<span class="token punctuation">;</span>
+
+include /usr/share/nginx/modules/*.conf<span class="token punctuation">;</span>
+
+events <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+    worker_connections 1024<span class="token punctuation">;</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+
+<span class="token comment" spellcheck="true"># 四层负载均衡，为两台Master apiserver组件提供负载均衡</span>
+stream <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+
+    log_format  main  <span class="token string">'<span class="token variable">$remote_addr</span> <span class="token variable">$upstream_addr</span> - [<span class="token variable">$time_local</span>] <span class="token variable">$status</span> <span class="token variable">$upstream_bytes_sent</span>'</span><span class="token punctuation">;</span>
+
+    access_log  /var/log/nginx/k8s-access.log  main<span class="token punctuation">;</span>
+
+    upstream k8s-apiserver <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+       server 192.168.40.180:6443<span class="token punctuation">;</span>   <span class="token comment" spellcheck="true"># Master1 APISERVER IP:PORT</span>
+       server 192.168.40.181:6443<span class="token punctuation">;</span>   <span class="token comment" spellcheck="true"># Master2 APISERVER IP:PORT</span>
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+    
+    server <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+       listen 16443<span class="token punctuation">;</span> <span class="token comment" spellcheck="true"># 由于nginx与master节点复用，这个监听端口不能是6443，否则会冲突</span>
+       proxy_pass k8s-apiserver<span class="token punctuation">;</span>
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+
+http <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+    log_format  main  <span class="token string">'<span class="token variable">$remote_addr</span> - <span class="token variable">$remote_user</span> [<span class="token variable">$time_local</span>] "<span class="token variable">$request</span>" '</span>
+                      <span class="token string">'<span class="token variable">$status</span> <span class="token variable">$body_bytes_sent</span> "<span class="token variable">$http_referer</span>" '</span>
+                      <span class="token string">'"<span class="token variable">$http_user_agent</span>" "<span class="token variable">$http_x_forwarded_for</span>"'</span><span class="token punctuation">;</span>
+
+    access_log  /var/log/nginx/access.log  main<span class="token punctuation">;</span>
+
+    sendfile            on<span class="token punctuation">;</span>
+    tcp_nopush          on<span class="token punctuation">;</span>
+    tcp_nodelay         on<span class="token punctuation">;</span>
+    keepalive_timeout   65<span class="token punctuation">;</span>
+    types_hash_max_size 2048<span class="token punctuation">;</span>
+
+    include             /etc/nginx/mime.types<span class="token punctuation">;</span>
+    default_type        application/octet-stream<span class="token punctuation">;</span>
+
+    server <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+        listen       80 default_server<span class="token punctuation">;</span>
+        server_name  _<span class="token punctuation">;</span>
+
+        location / <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+        <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+</code></pre>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># vim /etc/nginx/nginx.conf</span>
+user nginx<span class="token punctuation">;</span>
+worker_processes auto<span class="token punctuation">;</span>
+error_log /var/log/nginx/error.log<span class="token punctuation">;</span>
+pid /run/nginx.pid<span class="token punctuation">;</span>
+
+include /usr/share/nginx/modules/*.conf<span class="token punctuation">;</span>
+
+events <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+    worker_connections 1024<span class="token punctuation">;</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+
+<span class="token comment" spellcheck="true"># 四层负载均衡，为两台Master apiserver组件提供负载均衡</span>
+stream <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+
+    log_format  main  <span class="token string">'<span class="token variable">$remote_addr</span> <span class="token variable">$upstream_addr</span> - [<span class="token variable">$time_local</span>] <span class="token variable">$status</span> <span class="token variable">$upstream_bytes_sent</span>'</span><span class="token punctuation">;</span>
+
+    access_log  /var/log/nginx/k8s-access.log  main<span class="token punctuation">;</span>
+
+    upstream k8s-apiserver <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+       server 192.168.40.180:6443<span class="token punctuation">;</span>   <span class="token comment" spellcheck="true"># Master1 APISERVER IP:PORT</span>
+       server 192.168.40.181:6443<span class="token punctuation">;</span>   <span class="token comment" spellcheck="true"># Master2 APISERVER IP:PORT</span>
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+    
+    server <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+       listen 16443<span class="token punctuation">;</span> <span class="token comment" spellcheck="true"># 由于nginx与master节点复用，这个监听端口不能是6443，否则会冲突</span>
+       proxy_pass k8s-apiserver<span class="token punctuation">;</span>
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+
+http <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+    log_format  main  <span class="token string">'<span class="token variable">$remote_addr</span> - <span class="token variable">$remote_user</span> [<span class="token variable">$time_local</span>] "<span class="token variable">$request</span>" '</span>
+                      <span class="token string">'<span class="token variable">$status</span> <span class="token variable">$body_bytes_sent</span> "<span class="token variable">$http_referer</span>" '</span>
+                      <span class="token string">'"<span class="token variable">$http_user_agent</span>" "<span class="token variable">$http_x_forwarded_for</span>"'</span><span class="token punctuation">;</span>
+
+    access_log  /var/log/nginx/access.log  main<span class="token punctuation">;</span>
+
+    sendfile            on<span class="token punctuation">;</span>
+    tcp_nopush          on<span class="token punctuation">;</span>
+    tcp_nodelay         on<span class="token punctuation">;</span>
+    keepalive_timeout   65<span class="token punctuation">;</span>
+    types_hash_max_size 2048<span class="token punctuation">;</span>
+
+    include             /etc/nginx/mime.types<span class="token punctuation">;</span>
+    default_type        application/octet-stream<span class="token punctuation">;</span>
+
+    server <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+        listen       80 default_server<span class="token punctuation">;</span>
+        server_name  _<span class="token punctuation">;</span>
+
+        location / <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+        <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+</code></pre>
+<h3 id="keepalive配置"><a href="#keepalive配置" class="headerlink" title="keepalive配置"></a>keepalive配置</h3><p>主keepalived</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># vim  /etc/keepalived/keepalived.conf </span>
+global_defs <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123; </span>
+   notification_email <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123; </span>
+     acassen@firewall.loc 
+     failover@firewall.loc 
+     sysadmin@firewall.loc 
+   <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125; </span>
+   notification_email_from Alexandre.Cassen@firewall.loc  
+   smtp_server 127.0.0.1 
+   smtp_connect_timeout 30 
+   router_id NGINX_MASTER
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125; </span>
+
+vrrp_script check_nginx <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+    script <span class="token string">"/etc/keepalived/check_nginx.sh"</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+
+vrrp_instance VI_1 <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123; </span>
+    state MASTER 
+    interface ens33  <span class="token comment" spellcheck="true"># 修改为实际网卡名</span>
+    virtual_router_id 51 <span class="token comment" spellcheck="true"># VRRP 路由 ID实例，每个实例是唯一的 </span>
+    priority 100    <span class="token comment" spellcheck="true"># 优先级，备服务器设置 90 </span>
+    advert_int 1    <span class="token comment" spellcheck="true"># 指定VRRP 心跳包通告间隔时间，默认1秒 </span>
+    authentication <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123; </span>
+        auth_type PASS      
+        auth_pass 1111 
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;  </span>
+    <span class="token comment" spellcheck="true"># 虚拟IP</span>
+    virtual_ipaddress <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123; </span>
+        192.168.40.199/24
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125; </span>
+    track_script <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+        check_nginx
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125; </span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+</code></pre>
+<blockquote>
+<p>#vrrp_script：指定检查nginx工作状态脚本（根据nginx状态判断是否故障转移）<br>#virtual_ipaddress：虚拟IP（VIP）</p>
+</blockquote>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># vim  /etc/keepalived/check_nginx.sh </span>
+<span class="token comment" spellcheck="true">#!/bin/bash</span>
+count<span class="token operator">=</span><span class="token punctuation">$(</span>ps -ef <span class="token operator">|</span><span class="token function">grep</span> nginx <span class="token operator">|</span> <span class="token function">grep</span> sbin <span class="token operator">|</span> <span class="token function">egrep</span> -cv <span class="token string">"grep|$$"</span><span class="token punctuation">)</span>
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token string">"<span class="token variable">$count</span>"</span> -eq 0 <span class="token punctuation">]</span><span class="token punctuation">;</span><span class="token keyword">then</span>
+    systemctl stop keepalived
+<span class="token keyword">fi</span>
+
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># chmod +x  /etc/keepalived/check_nginx.sh      #加执行权限</span>
+</code></pre>
+<p>备keepalive</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># vim  /etc/keepalived/keepalived.conf </span>
+global_defs <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123; </span>
+   notification_email <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123; </span>
+     acassen@firewall.loc 
+     failover@firewall.loc 
+     sysadmin@firewall.loc 
+   <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125; </span>
+   notification_email_from Alexandre.Cassen@firewall.loc  
+   smtp_server 127.0.0.1 
+   smtp_connect_timeout 30 
+   router_id NGINX_BACKUP
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125; </span>
+
+vrrp_script check_nginx <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+    script <span class="token string">"/etc/keepalived/check_nginx.sh"</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+
+vrrp_instance VI_1 <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123; </span>
+    state BACKUP 
+    interface ens33
+    virtual_router_id 51 <span class="token comment" spellcheck="true"># VRRP 路由 ID实例，每个实例是唯一的 </span>
+    priority 90
+    advert_int 1
+    authentication <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123; </span>
+        auth_type PASS      
+        auth_pass 1111 
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;  </span>
+    virtual_ipaddress <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123; </span>
+        192.168.40.199/24
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125; </span>
+    track_script <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+        check_nginx
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125; </span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+</code></pre>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># vim  /etc/keepalived/check_nginx.sh </span>
+<span class="token comment" spellcheck="true">#!/bin/bash</span>
+count<span class="token operator">=</span><span class="token punctuation">$(</span>ps -ef <span class="token operator">|</span><span class="token function">grep</span> nginx <span class="token operator">|</span> <span class="token function">grep</span> sbin <span class="token operator">|</span> <span class="token function">egrep</span> -cv <span class="token string">"grep|$$"</span><span class="token punctuation">)</span>
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token string">"<span class="token variable">$count</span>"</span> -eq 0 <span class="token punctuation">]</span><span class="token punctuation">;</span><span class="token keyword">then</span>
+    systemctl stop keepalived
+<span class="token keyword">fi</span>
+
+<span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># chmod +x /etc/keepalived/check_nginx.sh</span>
+</code></pre>
+<blockquote>
+<p>#注：keepalived根据脚本返回状态码（0为工作正常，非0不正常）判断是否故障转移。</p>
+</blockquote>
+<h3 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h3><pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl daemon-reload</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl start nginx</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl start keepalived</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl enable nginx keepalived</span>
+<span class="token punctuation">[</span>root@kaivimaster1<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl status keepalived</span>
+ 
+<span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl daemon-reload</span>
+<span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl start nginx</span>
+<span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl start keepalived</span>
+<span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl enable nginx keepalived</span>
+<span class="token punctuation">[</span>root@kaivimaster2<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl status keepalived</span>
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/20210706135037981.png" alt="在这里插入图片描述"></p>
+<h3 id="测试vip是否绑定成功"><a href="#测试vip是否绑定成功" class="headerlink" title="测试vip是否绑定成功"></a>测试vip是否绑定成功</h3><pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ip addr</span>
+1: lo: <span class="token operator">&lt;</span>LOOPBACK,UP,LOWER_UP<span class="token operator">></span> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens33: <span class="token operator">&lt;</span>BROADCAST,MULTICAST,UP,LOWER_UP<span class="token operator">></span> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 00:0c:29:79:9e:36 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.40.180/24 brd 192.168.40.255 scope global noprefixroute ens33
+       valid_lft forever preferred_lft forever
+    inet 192.168.40.199/24 scope global secondary ens33
+       valid_lft forever preferred_lft forever
+    inet6 fe80::b6ef:8646:1cfc:3e0c/64 scope <span class="token function">link</span> noprefixroute 
+       valid_lft forever preferred_lft forever
+</code></pre>
+<h3 id="测试keepalived"><a href="#测试keepalived" class="headerlink" title="测试keepalived"></a>测试keepalived</h3><pre class=" language-bash"><code class="language-bash">停掉kaivimaster1上的nginx。Vip会漂移到kaivimaster2
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># service nginx stop</span>
+<span class="token punctuation">[</span>root@kaivimaster2<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ip addr</span>
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/20210706111707932.png" alt="在这里插入图片描述"></p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#启动kaivimaster1上的nginx和keepalived，vip又会漂移回来</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl daemon-reload</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl start nginx</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># systemctl start keepalived</span>
+<span class="token punctuation">[</span>root@kaivimaster1<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ip addr</span>
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/2021070611172949.png" alt="在这里插入图片描述"></p>
+<h2 id="kubeadm初始化k8s集群"><a href="#kubeadm初始化k8s集群" class="headerlink" title="kubeadm初始化k8s集群"></a>kubeadm初始化k8s集群</h2><p>在kaivimaster1上创建kubeadm-config.yaml文件：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cd /root/</span>
+<span class="token punctuation">[</span>root@kaivimaster1<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># vim kubeadm-config.yaml </span>
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+kubernetesVersion: v1.20.6
+controlPlaneEndpoint: 192.168.40.199:16443
+imageRepository: registry.aliyuncs.com/google_containers
+apiServer:
+ certSANs:
+ - 192.168.40.180
+ - 192.168.40.181
+ - 192.168.40.182
+ - 192.168.40.199
+networking:
+  podSubnet: 10.244.0.0/16
+  serviceSubnet: 10.10.0.0/16
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind:  KubeProxyConfiguration
+mode: ipvs
+</code></pre>
+<h2 id="使用kubeadm初始化k8s集群"><a href="#使用kubeadm初始化k8s集群" class="headerlink" title="使用kubeadm初始化k8s集群"></a>使用kubeadm初始化k8s集群</h2><p>#把初始化k8s集群需要的离线镜像包上传到kaivimaster1、kaivimaster2、kaivinode1机器上，手动解压：<br><img src="https://img-blog.csdnimg.cn/20210706112108913.png" alt="在这里插入图片描述"></p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker load -i k8simage-1-20-6.tar.gz</span>
+<span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker load -i k8simage-1-20-6.tar.gz</span>
+<span class="token punctuation">[</span>root@kaivinode1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker load -i k8simage-1-20-6.tar.gz</span>
+</code></pre>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubeadm init --config kubeadm-config.yaml</span>
+</code></pre>
+<p>注：–image-repository registry.aliyuncs.com/google_containers：手动指定仓库地址为registry.aliyuncs.com/google_containers。kubeadm默认从k8s.grc.io拉取镜像，但是k8s.gcr.io访问不到，所以需要指定从registry.aliyuncs.com/google_containers仓库拉取镜像。</p>
+<p>显示如下，说明安装完成：</p>
+<p><img src="https://img-blog.csdnimg.cn/20210706112211773.png" alt="在这里插入图片描述"></p>
+<blockquote>
+<p>kubeadm join 192.168.40.199:16443 –token zwzcks.u4jd8lj56wpckcwv  –discovery-token-ca-cert-hash sha256:1ba1b274090feecfef58eddc2a6f45590299c1d0624618f1f429b18a064cb728  –control-plane<br> #上面命令是把master节点加入集群，需要保存下来，每个人的都不一样 </p>
+<p> kubeadm join 192.168.40.199:16443 –token zwzcks.u4jd8lj56wpckcwv  –discovery-token-ca-cert-hash sha256:1ba1b274090feecfef58eddc2a6f45590299c1d0624618f1f429b18a064cb728<br> #上面命令是把node节点加入集群，需要保存下来，每个人的都不一样</p>
+</blockquote>
+<p>#配置kubectl的配置文件config，相当于对kubectl进行授权，这样kubectl命令可以使用这个证书对k8s集群进行管理</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># mkdir -p $HOME/.kube</span>
+
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span>
+
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># sudo chown $(id -u):$(id -g) $HOME/.kube/config</span>
+
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubectl get nodes</span>
+NAME               STATUS    ROLES                  AGE   VERSION
+kaivimaster1   NotReady   control-plane,master    60s   v1.20.6
+此时集群状态还是NotReady状态，因为没有安装网络插件。    
+</code></pre>
+<h2 id="扩容k8s集群-添加master节点"><a href="#扩容k8s集群-添加master节点" class="headerlink" title="扩容k8s集群-添加master节点"></a>扩容k8s集群-添加master节点</h2><p>#把kaivimaster1节点的证书拷贝到kaivimaster2上</p>
+<p>在kaivimaster2创建证书存放目录：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cd /root &amp;&amp; mkdir -p /etc/kubernetes/pki/etcd &amp;&amp;mkdir -p ~/.kube/</span>
+</code></pre>
+<p>#把kaivimaster1节点的证书拷贝到kaivimaster2上：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># scp /etc/kubernetes/pki/ca.crt kaivimaster2:/etc/kubernetes/pki/</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># scp /etc/kubernetes/pki/ca.key kaivimaster2:/etc/kubernetes/pki/</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># scp /etc/kubernetes/pki/sa.key kaivimaster2:/etc/kubernetes/pki/</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># scp /etc/kubernetes/pki/sa.pub kaivimaster2:/etc/kubernetes/pki/</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># scp /etc/kubernetes/pki/front-proxy-ca.crt kaivimaster2:/etc/kubernetes/pki/</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># scp /etc/kubernetes/pki/front-proxy-ca.key kaivimaster2:/etc/kubernetes/pki/</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># scp /etc/kubernetes/pki/etcd/ca.crt kaivimaster2:/etc/kubernetes/pki/etcd/</span>
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># scp /etc/kubernetes/pki/etcd/ca.key kaivimaster2:/etc/kubernetes/pki/etcd/</span>
+</code></pre>
+<p>#证书拷贝之后在kaivimaster2上执行如下命令，大家复制自己的，这样就可以把kaivimaster2和加入到集群，成为控制节点：</p>
+<p>在kaivimaster1上查看加入节点的命令：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubeadm token create --print-join-command</span>
+
+kubeadm <span class="token function">join</span> 192.168.40.199:16443 --token zwzcks.u4jd8lj56wpckcwv \
+    --discovery-token-ca-cert-hash sha256:1ba1b274090feecfef58eddc2a6f45590299c1d0624618f1f429b18a064cb728 \
+    --control-plane   <span class="token comment" spellcheck="true">#这个参数很重要</span>
+</code></pre>
+<p>在chaomaster2服务器中执行：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubeadm token create --print-join-command</span>
+
+kubeadm <span class="token function">join</span> 192.168.40.199:16443 --token zwzcks.u4jd8lj56wpckcwv \
+    --discovery-token-ca-cert-hash sha256:1ba1b274090feecfef58eddc2a6f45590299c1d0624618f1f429b18a064cb728 \
+    --control-plane
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/20210706112824761.png" alt="在这里插入图片描述"><br>#看到上面说明kaivimaster2节点已经加入到集群了<br>还要执行上面三条命令</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># mkdir -p $HOME/.kube</span>
+
+<span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span>
+
+<span class="token punctuation">[</span>root@kaivimaster2 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># sudo chown $(id -u):$(id -g) $HOME/.kube/config</span>
+</code></pre>
+<p>在kaivimaster1上查看集群状况：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#  kubectl get nodes</span>
+NAME              STATUS     ROLES                  AGE   VERSION
+kaivimaster1   NotReady   control-plane,master   49m   v1.20.6
+kaivimaster2   NotReady   <span class="token operator">&lt;</span>none<span class="token operator">></span>                 39s   v1.20.6
+</code></pre>
+<p>上面可以看到kaivimaster2已经加入到集群了</p>
+<h2 id="扩容k8s集群-添加node节点"><a href="#扩容k8s集群-添加node节点" class="headerlink" title="扩容k8s集群-添加node节点"></a>扩容k8s集群-添加node节点</h2><p>在kaivimaster1上查看加入节点的命令：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubeadm token create --print-join-command</span>
+</code></pre>
+<p>#显示如下：</p>
+<pre class=" language-bash"><code class="language-bash">kubeadm <span class="token function">join</span> 192.168.40.199:16443 --token y23a82.hurmcpzedblv34q8     --discovery-token-ca-cert-hash sha256:1ba1b274090feecfef58eddc2a6f45590299c1d0624618f1f429b18a064cb728
+</code></pre>
+<p>把kaivinode1加入k8s集群：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivinode1~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubeadm token create --print-join-command</span>
+kubeadm <span class="token function">join</span> 192.168.40.199:16443 --token y23a82.hurmcpzedblv34q8     --discovery-token-ca-cert-hash sha256:1ba1b274090feecfef58eddc2a6f45590299c1d0624618f1f429b18a064cb728
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/20210706133155787.png" alt="在这里插入图片描述"><br>#看到上面说明kaivinode1节点已经加入到集群了,充当工作节点</p>
+<p>#在kaivimaster1上查看集群节点状况：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubectl get nodes</span>
+NAME              STATUS     ROLES                  AGE     VERSION
+kaivimaster1   NotReady   control-plane,master   53m     v1.20.6
+kaivimaster2   NotReady   control-plane,master   5m13s   v1.20.6
+kaivinode1     NotReady   <span class="token operator">&lt;</span>none<span class="token operator">></span>                 59s     v1.20.6
+</code></pre>
+<p>#可以看到kaivinode1的ROLES角色为空，<none>就表示这个节点是工作节点。</p>
+<p>#可以把kaivinode1的ROLES变成work，按照如下方法：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubectl label node kaivinode1 node-role.kubernetes.io/worker=worker</span>
+</code></pre>
+<p>注意：上面状态都是NotReady状态，说明没有安装网络插件</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubectl get pods -n kube-system</span>
+NAME                                      READY   STATUS    RESTARTS   AGE
+coredns-7f89b7bc75-lh28j                  0/1     Pending   0          18h
+coredns-7f89b7bc75-p7nhj                  0/1     Pending   0          18h
+etcd-kaivimaster1                      1/1     Running   0          18h
+etcd-kaivimaster2                      1/1     Running   0          15m
+kube-apiserver-kaivimaster1            1/1     Running   0          18h
+kube-apiserver-kaivimaster2            1/1     Running   0          15m
+kube-controller-manager-kaivimaster1   1/1     Running   1          18h
+kube-controller-manager-kaivimaster2   1/1     Running   0          15m
+kube-proxy-n26mf                          1/1     Running   0          4m33s
+kube-proxy-sddbv                          1/1     Running   0          18h
+kube-proxy-sgqm2                          1/1     Running   0          15m
+kube-scheduler-kaivimaster1            1/1     Running   1          18h
+kube-scheduler-kaivimaster2            1/1     Running   0          15m
+</code></pre>
+<p>coredns-7f89b7bc75-lh28j是pending状态，这是因为还没有安装网络插件，等到下面安装好网络插件之后这个cordns就会变成running了</p>
+<h2 id="安装kubernetes网络组件-Calico"><a href="#安装kubernetes网络组件-Calico" class="headerlink" title="安装kubernetes网络组件-Calico"></a>安装kubernetes网络组件-Calico</h2><p>上传calico.yaml到kaivimaster1上，使用yaml文件安装calico 网络插件可以做网络策略) 。<br><img src="https://img-blog.csdnimg.cn/20210706133730658.png" alt="在这里插入图片描述"></p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubectl apply -f  calico.yaml</span>
+</code></pre>
+<p>注：在线下载配置文件地址是： <a target="_blank" rel="noopener" href="https://docs.projectcalico.org/manifests/calico.yaml">https://docs.projectcalico.org/manifests/calico.yaml</a></p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubectl get pod -n kube-system </span>
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/20210706133819276.png" alt="在这里插入图片描述"><br>coredns-这个pod现在是running状态，运行正常</p>
+<p>再次查看集群状态。</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubectl get nodes</span>
+NAME              STATUS   ROLES                  AGE     VERSION
+kaivimaster1   Ready    control-plane,master   58m     v1.20.6
+kaivimaster2   Ready    control-plane,master   10m     v1.20.6
+kaivinode1     Ready    <span class="token operator">&lt;</span>none<span class="token operator">></span>                 5m46s   v1.20.6
+</code></pre>
+<p>#STATUS状态是Ready，说明k8s集群正常运行了</p>
+<h2 id="测试在k8s创建pod是否可以正常访问网络"><a href="#测试在k8s创建pod是否可以正常访问网络" class="headerlink" title="测试在k8s创建pod是否可以正常访问网络"></a>测试在k8s创建pod是否可以正常访问网络</h2><p>#把busybox-1-28.tar.gz上传到kaivinode1节点，手动解压<br><img src="https://img-blog.csdnimg.cn/2021070613401972.png" alt="在这里插入图片描述"></p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivinode1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker load -i busybox-1-28.tar.gz</span>
+
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubectl run busybox --image busybox:1.28 --restart=Never --rm -it busybox -- sh</span>
+/ <span class="token comment" spellcheck="true"># ping www.baidu.com</span>
+PING www.baidu.com <span class="token punctuation">(</span>39.156.66.18<span class="token punctuation">)</span>: 56 data bytes
+64 bytes from 39.156.66.18: seq<span class="token operator">=</span>0 ttl<span class="token operator">=</span>127 time<span class="token operator">=</span>39.3 ms
+</code></pre>
+<p>#通过上面可以看到能访问网络，说明calico网络插件已经被正常安装了</p>
+<h2 id="测试k8s集群中部署tomcat服务"><a href="#测试k8s集群中部署tomcat服务" class="headerlink" title="测试k8s集群中部署tomcat服务"></a>测试k8s集群中部署tomcat服务</h2><p>#把tomcat.tar.gz、tomcat.yamltomcat-service.yaml、上传到kaivinode1，手动解压<br><img src="https://img-blog.csdnimg.cn/20210706134202843.png" alt="在这里插入图片描述"></p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivinode1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker load -i tomcat.tar.gz</span>
+
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubectl apply -f tomcat.yaml</span>
+
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true">#  kubectl get pods</span>
+NAME       READY   STATUS    RESTARTS   AGE
+demo-pod   1/1     Running   0          10s
+
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubectl apply -f tomcat-service.yaml</span>
+
+<span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubectl get svc</span>
+NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT<span class="token punctuation">(</span>S<span class="token punctuation">)</span>          AGE
+kubernetes   ClusterIP   10.255.0.1       <span class="token operator">&lt;</span>none<span class="token operator">></span>        443/TCP          158m
+tomcat       NodePort    10.255.227.179   <span class="token operator">&lt;</span>none<span class="token operator">></span>        8080:30080/TCP   19m
+</code></pre>
+<p>在浏览器访问kaivinode1节点的ip:30080即可请求到浏览器</p>
+<p><img src="https://img-blog.csdnimg.cn/20210706134358729.png" alt="在这里插入图片描述"></p>
+<h2 id="测试coredns是否正常"><a href="#测试coredns是否正常" class="headerlink" title="测试coredns是否正常"></a>测试coredns是否正常</h2><pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@kaivimaster1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># kubectl run busybox --image busybox:1.28 --restart=Never --rm -it busybox -- sh</span>
+If you don't see a <span class="token function">command</span> prompt, try pressing enter.
+/ <span class="token comment" spellcheck="true"># nslookup kubernetes.default.svc.cluster.local</span>
+Server:    10.10.0.10
+Address 1: 10.10.0.10 kube-dns.kube-system.svc.cluster.local
+
+Name:      kubernetes.default.svc.cluster.local
+Address 1: 10.10.0.1 kubernetes.default.svc.cluster.local
+
+
+/ <span class="token comment" spellcheck="true"># nslookup tomcat.default.svc.cluster.local</span>
+Server:    10.10.0.10
+Address 1: 10.10.0.10 kube-dns.kube-system.svc.cluster.local
+
+Name:      tomcat.default.svc.cluster.local
+Address 1: 10.10.13.88 tomcat.default.svc.cluster.local
+</code></pre>
+<p>10.10.13.88就是我们coreDNS的clusterIP，说明coreDNS配置好了。<br>解析内部Service的名称，是通过coreDNS去解析的。</p>
+<p>10.10.0.10是创建的tomcat的service ip</p>
+<p>#注意：<br>busybox要用指定的1.28版本，不能用最新版本，最新版本，nslookup会解析不到dns和ip </p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/11/18/Gitlab-v1/" rel="prev" title="Gitlab Best Practices">
+      <i class="fa fa-chevron-left"></i> Gitlab Best Practices
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/11/18/Binary-deployment-K8S-cluster-Stable-version-1-20/" rel="next" title="Binary deployment K8S cluster - Stable version 1.20">
+      Binary deployment K8S cluster - Stable version 1.20 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#k8s%E7%8E%AF%E5%A2%83%E8%A7%84%E5%88%92"><span class="nav-number">1.1.</span> <span class="nav-text">k8s环境规划</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP"><span class="nav-number">2.1.</span> <span class="nav-text">配置静态IP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%BB%E6%9C%BA%E5%90%8D"><span class="nav-number">2.2.</span> <span class="nav-text">配置主机名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEhosts%E6%96%87%E4%BB%B6"><span class="nav-number">2.3.</span> <span class="nav-text">配置hosts文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E8%8A%82%E7%82%B9%E5%85%8D%E5%AF%86"><span class="nav-number">2.4.</span> <span class="nav-text">主机节点免密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%ADfirewalld%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">2.5.</span> <span class="nav-text">关闭firewalld防火墙</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%ADselinux"><span class="nav-number">2.6.</span> <span class="nav-text">关闭selinux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%AD%E4%BA%A4%E6%8D%A2%E5%88%86%E5%8C%BAswap"><span class="nav-number">2.7.</span> <span class="nav-text">关闭交换分区swap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0"><span class="nav-number">2.8.</span> <span class="nav-text">修改内核参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E9%98%BF%E9%87%8C%E4%BA%91repo%E6%BA%90"><span class="nav-number">2.9.</span> <span class="nav-text">配置阿里云repo源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5"><span class="nav-number">2.10.</span> <span class="nav-text">配置时间同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85iptables"><span class="nav-number">2.11.</span> <span class="nav-text">安装iptables</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%90%AFipvs"><span class="nav-number">2.12.</span> <span class="nav-text">开启ipvs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%9F%BA%E7%A1%80%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="nav-number">2.13.</span> <span class="nav-text">安装基础软件包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85docker%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.</span> <span class="nav-text">安装docker服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85docker-ce"><span class="nav-number">3.1.</span> <span class="nav-text">安装docker-ce</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEdocker%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F%E5%99%A8%E5%92%8C%E9%A9%B1%E5%8A%A8"><span class="nav-number">3.2.</span> <span class="nav-text">配置docker镜像加速器和驱动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%88%9D%E5%A7%8B%E5%8C%96k8s%E9%9C%80%E8%A6%81%E7%9A%84%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="nav-number">4.</span> <span class="nav-text">安装初始化k8s需要的软件包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87keepalive-nginx%E5%AE%9E%E7%8E%B0k8s-apiserver%E8%8A%82%E7%82%B9%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">通过keepalive+nginx实现k8s apiserver节点高可用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEepel%E6%BA%90"><span class="nav-number">5.1.</span> <span class="nav-text">配置epel源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85nginx%E4%B8%BB%E5%A4%87"><span class="nav-number">5.2.</span> <span class="nav-text">安装nginx主备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9nginx%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E3%80%82%E4%B8%BB%E5%A4%87%E4%B8%80%E6%A0%B7"><span class="nav-number">5.3.</span> <span class="nav-text">修改nginx配置文件。主备一样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#keepalive%E9%85%8D%E7%BD%AE"><span class="nav-number">5.4.</span> <span class="nav-text">keepalive配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="nav-number">5.5.</span> <span class="nav-text">启动服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95vip%E6%98%AF%E5%90%A6%E7%BB%91%E5%AE%9A%E6%88%90%E5%8A%9F"><span class="nav-number">5.6.</span> <span class="nav-text">测试vip是否绑定成功</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95keepalived"><span class="nav-number">5.7.</span> <span class="nav-text">测试keepalived</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubeadm%E5%88%9D%E5%A7%8B%E5%8C%96k8s%E9%9B%86%E7%BE%A4"><span class="nav-number">6.</span> <span class="nav-text">kubeadm初始化k8s集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8kubeadm%E5%88%9D%E5%A7%8B%E5%8C%96k8s%E9%9B%86%E7%BE%A4"><span class="nav-number">7.</span> <span class="nav-text">使用kubeadm初始化k8s集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%AE%B9k8s%E9%9B%86%E7%BE%A4-%E6%B7%BB%E5%8A%A0master%E8%8A%82%E7%82%B9"><span class="nav-number">8.</span> <span class="nav-text">扩容k8s集群-添加master节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%AE%B9k8s%E9%9B%86%E7%BE%A4-%E6%B7%BB%E5%8A%A0node%E8%8A%82%E7%82%B9"><span class="nav-number">9.</span> <span class="nav-text">扩容k8s集群-添加node节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85kubernetes%E7%BD%91%E7%BB%9C%E7%BB%84%E4%BB%B6-Calico"><span class="nav-number">10.</span> <span class="nav-text">安装kubernetes网络组件-Calico</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%9C%A8k8s%E5%88%9B%E5%BB%BApod%E6%98%AF%E5%90%A6%E5%8F%AF%E4%BB%A5%E6%AD%A3%E5%B8%B8%E8%AE%BF%E9%97%AE%E7%BD%91%E7%BB%9C"><span class="nav-number">11.</span> <span class="nav-text">测试在k8s创建pod是否可以正常访问网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95k8s%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2tomcat%E6%9C%8D%E5%8A%A1"><span class="nav-number">12.</span> <span class="nav-text">测试k8s集群中部署tomcat服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95coredns%E6%98%AF%E5%90%A6%E6%AD%A3%E5%B8%B8"><span class="nav-number">13.</span> <span class="nav-text">测试coredns是否正常</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Kaivi"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Kaivi</p>
+  <div class="site-description" itemprop="description">Cease to struggle and you cease to live.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/kai25@michaels.com" title="E-Mail → kai25@michaels.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-10 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kaivi</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
