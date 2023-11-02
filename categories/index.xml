@@ -4,6 +4,14 @@
         <link>/categories/</link>
         <description>Categories - Category - My New Hugo Site duanxin</description>
         <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 02 Nov 2023 10:12:00 &#43;0800</lastBuildDate><atom:link href="/categories/" rel="self" type="application/rss+xml" /><item>
+    <title>hugo-kaivi</title>
+    <link>/categories/hugo-kaivi/</link>
+    <pubDate>Thu, 02 Nov 2023 10:12:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>/categories/hugo-kaivi/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
     <title>web-kaivi</title>
     <link>/categories/web-kaivi/</link>
     <pubDate>Thu, 02 Nov 2023 10:12:00 &#43;0800</pubDate>

@@ -6,6 +6,14 @@
         <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 02 Nov 2023 10:12:00 &#43;0800</lastBuildDate>
             <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>How to do it</title>
+    <link>/posts/haotodo/</link>
+    <pubDate>Thu, 02 Nov 2023 10:12:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>/posts/haotodo/</guid>
+    <description><![CDATA[How to depoly hugo 基础命令 hugo new posts/haotodo.md #再工作目录下 执行新增一个文档 必须以md结尾 hugo server -D #本地执行，访问localhost：1313 hugo -F --cleanDestinationDir #生成public的静态文件，后续这个文件上传到GitHub git init #进入到public目录 首次 git add . git commit -m &#34;first commit v1&#34; #增加远程仓库 注意分支 git remote add origin https://github.com/kaivi-duanxin/kaivi-duanxin.github.io.git git push -u origin master #提交代码到master 如果失败: git pull origin master --allow-unrelated-histories #强制同步 或者清空仓库重试 ##清空仓库 https://blog.csdn.net/szsc_/article/details/124222118 ]]></description>
+</item>
+<item>
     <title>Hugo博客系列(一)</title>
     <link>/posts/2023.11.1/</link>
     <pubDate>Thu, 02 Nov 2023 10:12:00 &#43;0800</pubDate>
