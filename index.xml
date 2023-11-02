@@ -15,5 +15,12 @@
       <guid>/posts/2023.11.1/</guid>
       <description>hi hello hello world test 1 </description>
     </item>
+    <item>
+      <title>Hugo博客系列(一)</title>
+      <link>/posts/2023.11.2/</link>
+      <pubDate>Thu, 02 Nov 2023 10:12:00 +0800</pubDate>
+      <guid>/posts/2023.11.2/</guid>
+      <description>图片测试 </description>
+    </item>
   </channel>
 </rss>
