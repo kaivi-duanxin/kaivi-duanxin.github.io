@@ -19,5 +19,13 @@
     <guid>/tags/test/</guid>
     <description><![CDATA[]]></description>
 </item>
+<item>
+    <title>2018</title>
+    <link>/tags/2018/</link>
+    <pubDate>Wed, 01 Nov 2023 10:12:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>/tags/2018/</guid>
+    <description><![CDATA[]]></description>
+</item>
 </channel>
 </rss>
